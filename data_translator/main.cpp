@@ -69,7 +69,6 @@ int convertFile( QString fileName, Mapping const& mapping, int fileNumber)
         /* if this is column header */
         if ( currRow == 0) {
             vector< Mapping::Change>::const_iterator it = mapping.columns_.begin();
-            int i = 0;
             while ( it != mapping.columns_.end() - 1) {
                 newFile << (*it).newName_ << "\t";
                 ++it;
@@ -84,7 +83,7 @@ int convertFile( QString fileName, Mapping const& mapping, int fileNumber)
             copy( istream_iterator<string>(iss), istream_iterator<string>(), back_inserter( vec));
             vector< string>::const_iterator vecIt = vec.begin();
             int i = 0;
-            int columnId;
+            unsigned int columnId;
             for ( ; i < newNumberOfCols - 1; ++i) {
                 columnId = mapping.columns_[i].oldId_;
                 if ( columnId > vec.size() - 1) continue;
