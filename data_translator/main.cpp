@@ -14,28 +14,22 @@
 #include <sstream>
 
 #include "mapping.h"
+#include "filesdescription.h"
+#include "statistics.h"
 
-/*
-The following structure contains the necessary information
-to allow threads for files access and to sync threads.
-*/
-
-struct FilesDescription
-{
-    QStringList             names_;
-    int            filesToProcess_;
-    QDir                directory_;
-    int fileIdFromName( QString fileName);
-};
-
-/* Define globally accessible variables and a mutex */
-#define NUMTHRDS 4
-FilesDescription filesDescription_;
+/* Define globally accessible variables and a mutex.
+ * NUMTHRDS is the number of threads that we use
+ * and it is defined in statistics.h
+ */
 int newNumberOfCols;
 int newNumberOfRows;
 pthread_t callThd[NUMTHRDS];
 pthread_mutex_t mutexFilesDescription;
-Mapping mapping;
+
+/* global instances */
+FilesDescription filesDescription_;
+Statistics stats_;
+Mapping mapping_;
 
 /**
  * @brief convertFile
@@ -59,7 +53,7 @@ int convertFile( QString fileName, Mapping const& mapping, int fileNumber)
     size_t currRow = 0;
 
     stringstream s;
-    s << "outputFile" << fileNumber << ".tsv";;
+    s << filesDescription_.directory_.absolutePath().toStdString() << "/" << "outputFile" << fileNumber << ".tsv";;
     string newFileName = s.str();
     ofstream newFile( newFileName.c_str());
     if ( !newFile.is_open()) return -1;
@@ -130,18 +124,24 @@ void *processFile(void *arg)
         }
         --fileNumber;
         filesDescription_.filesToProcess_ = fileNumber;
-        pthread_mutex_unlock (&mutexFilesDescription);
+        pthread_mutex_unlock ( &mutexFilesDescription);
 
         /* do the task */
-        QString fileName = filesDescription_.names_[fileNumber];
+        QString fileName = filesDescription_.names_[ fileNumber];
         int fileIdFromName = filesDescription_.fileIdFromName( fileName);
-        int y = convertFile( filesDescription_.directory_ .absolutePath() + "/" + filesDescription_.names_[fileNumber],
-                             mapping, fileIdFromName);
 
-        printf( "Thread %ld did\n", threadId);
+        int res = convertFile( filesDescription_.directory_ .absolutePath()
+                               + "/" + filesDescription_.names_[ fileNumber],
+                                                    mapping_, fileIdFromName);
+        if ( res < 0) {
+            stats_.workNotDoneByThread[ threadId]++;
+        } else {
+            stats_.workDoneByThread[ threadId]++;
+        }
+
         if ( fileNumber == 0) break;
     }
-    printf( "Thread %ld exit\n", threadId);
+
     pthread_exit((void*) 0);
 }
 
@@ -168,40 +168,38 @@ int main (int argc, char *argv[])
     }
     QString folderLocation = argv[1];
 
-    QCoreApplication app(argc, argv);
-
     /* get files info and initialize global structure */
-    QStringList nameFilter("dataFile*.tsv");
-    filesDescription_.directory_ = QDir( folderLocation);
-    filesDescription_.names_ = filesDescription_.directory_ .entryList( nameFilter);
-    filesDescription_.filesToProcess_ = filesDescription_.names_.size();
+    filesDescription_ = FilesDescription( folderLocation);
 
-    QString columnMapping = filesDescription_.directory_ .absolutePath() + "/" + "column_mapping.tsv";
-    QString identifierMapping = filesDescription_.directory_ .absolutePath() + "/" + "identifier_mapping.tsv";
-    mapping = Mapping( columnMapping, identifierMapping);
+    QString columnMapping = filesDescription_.directory_.absolutePath()
+            + "/" + "column_mapping.tsv";
+    QString identifierMapping = filesDescription_.directory_.absolutePath()
+            + "/" + "identifier_mapping.tsv";
+    mapping_ = Mapping( columnMapping, identifierMapping);
 
-    try {
-        mapping.map();
-    } catch ( std::exception& e) {
-        fprintf( stderr, e.what());
+    try
+    {
+        mapping_.map();
+    }
+    catch ( std::exception& e)
+    {
+        fprintf( stderr, "%s\n", e.what());
         return -1;
     }
 
-    newNumberOfCols = mapping.columns_.size();
-    newNumberOfRows = mapping.rows_.size() + 1;
-    int y = convertFile( filesDescription_.directory_ .absolutePath() + "/" + filesDescription_.
-                         names_[1], mapping, 1);
+    newNumberOfCols = mapping_.columns_.size();
+    newNumberOfRows = mapping_.rows_.size() + 1;
 
     /* create threads */
     long i;
     void *status;
     pthread_attr_t attr;
 
-    pthread_mutex_init(&mutexFilesDescription, NULL);
+    pthread_mutex_init( &mutexFilesDescription, NULL);
 
     /* Create threads to perform fields extraction  */
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    pthread_attr_init( &attr);
+    pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE);
 
     for( i = 0; i < NUMTHRDS; ++i)
     {
@@ -210,7 +208,7 @@ int main (int argc, char *argv[])
          * and ending on the file with least identifier
          * (number in the name)
         */
-        pthread_create(&callThd[i], &attr, processFile, (void *)i);
+        pthread_create( &callThd[i], &attr, processFile, (void *)i);
     }
 
     pthread_attr_destroy(&attr);
@@ -218,24 +216,13 @@ int main (int argc, char *argv[])
 
     /* Wait for the other threads */
     for( i = 0; i < NUMTHRDS; ++i) {
-        pthread_join(callThd[i], &status);
+        pthread_join( callThd[i], &status);
     }
+
     /* After joining, print out the results and cleanup */
-    pthread_mutex_destroy(&mutexFilesDescription);
+    stats_.print( filesDescription_);
+    pthread_mutex_destroy( &mutexFilesDescription);
     pthread_exit(NULL);
 
     return 0;
-}
-
-/**
- * @brief FilesDescription::fileIdFromName
- * returns int value of id
- * file name has to contain "." !
- * @param fileName
- * @return
- */
-int FilesDescription::fileIdFromName( QString fileName)
-{
-    std::string name = fileName.toStdString();
-    return atoi( &name[name.find(".") - 1]);
 }
