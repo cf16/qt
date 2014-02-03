@@ -147,13 +147,7 @@ void *processFile(void *arg)
 
 /*
 The main program creates threads which do all the work and then
-print out result upon completion. Before creating the threads,
-The input data is created. Since all threads update a shared structure, we
-need a mutex for mutual exclusion. The main thread needs to wait for
-all threads to complete, it waits for each one of the threads. We specify
-a thread attribute value that allow the main thread to join with the
-threads it creates. Note also that we free up handles  when they are
-no longer needed.
+print out result upon completion.
 */
 
 int main (int argc, char *argv[])
