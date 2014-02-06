@@ -1,3 +1,14 @@
+/*!
+ *  \brief     multithreaded tsv files converter to extract specified columns and fields
+ *  \details
+ *  \author    piter cf16 eu
+ *  \version   1
+ *  \date      04.02.2014 08:34:08 AM
+ *  \pre
+ *  \warning   Has not been tested in production environment.
+ *  \copyright GNU Public License.
+ */
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
