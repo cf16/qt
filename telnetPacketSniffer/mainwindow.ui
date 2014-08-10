@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
+    <width>1151</width>
     <height>664</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -17,309 +23,222 @@
    <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLineEdit" name="hostLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>10</y>
-      <width>321</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="portLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>38</y>
-      <width>321</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="hostLabel">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>21</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>host</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="portLabel">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>38</y>
-      <width>20</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;port&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="socketMessagesLabel">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>291</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>socket messages</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="framesLabel">
-    <property name="geometry">
-     <rect>
-      <x>425</x>
-      <y>291</y>
-      <width>33</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>frames</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="connectButton">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>64</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(85, 255, 0);</string>
-    </property>
-    <property name="text">
-     <string>connect</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="disconnectButton">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>64</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>disconnect</string>
-    </property>
-   </widget>
-   <widget class="QPlainTextEdit" name="listPlainTextEdit">
-    <property name="geometry">
-     <rect>
-      <x>425</x>
-      <y>38</y>
-      <width>271</width>
-      <height>221</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="msgListLabel">
-    <property name="geometry">
-     <rect>
-      <x>425</x>
-      <y>9</y>
-      <width>110</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>message list to be sent</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="loadListMsgButton">
-    <property name="geometry">
-     <rect>
-      <x>541</x>
-      <y>9</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>load</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>310</y>
-      <width>691</width>
-      <height>301</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPlainTextEdit" name="msgsPlainTextEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>3</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPlainTextEdit" name="framesPlainTextEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>3</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="backgroundVisible">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="msgLabel">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>120</y>
-      <width>45</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>message </string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="msgLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>135</y>
-      <width>401</width>
-      <height>121</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="sendMsgButton">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>262</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>send</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="sendMsgListButton">
-    <property name="geometry">
-     <rect>
-      <x>622</x>
-      <y>9</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>send</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="statusLabel">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>94</y>
-      <width>30</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>status</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="statusStateLabel">
-    <property name="geometry">
-     <rect>
-      <x>46</x>
-      <y>94</y>
-      <width>63</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>disconnected</string>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="hostLabel">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>host</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="hostLineEdit"/>
+    </item>
+    <item row="0" column="3" rowspan="8">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="msgListLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>message list to be sent</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="loadListMsgButton">
+        <property name="text">
+         <string>load</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="sendMsgListButton">
+        <property name="text">
+         <string>send</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QPlainTextEdit" name="listPlainTextEdit">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="portLabel">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;port&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="portLineEdit"/>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QPushButton" name="connectButton">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(85, 255, 0);</string>
+      </property>
+      <property name="text">
+       <string>connect</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="disconnectButton">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>disconnect</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="statusLabel">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QLabel" name="statusStateLabel">
+      <property name="text">
+       <string>disconnected</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="msgLabel">
+      <property name="text">
+       <string>message </string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="3">
+     <widget class="QLineEdit" name="msgLineEdit"/>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QPushButton" name="sendMsgButton">
+      <property name="text">
+       <string>send</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="3">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="socketMessagesLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>socket messages</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="framesLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>frames</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPlainTextEdit" name="msgsPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>5</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPlainTextEdit" name="framesPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>5</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="backgroundVisible">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+   <zorder>hostLineEdit</zorder>
+   <zorder>portLineEdit</zorder>
+   <zorder>hostLabel</zorder>
+   <zorder>portLabel</zorder>
+   <zorder>socketMessagesLabel</zorder>
+   <zorder>framesLabel</zorder>
+   <zorder>connectButton</zorder>
+   <zorder>disconnectButton</zorder>
+   <zorder>listPlainTextEdit</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>msgLabel</zorder>
+   <zorder>msgLineEdit</zorder>
+   <zorder>sendMsgButton</zorder>
+   <zorder>statusLabel</zorder>
+   <zorder>statusStateLabel</zorder>
+   <zorder>framesPlainTextEdit</zorder>
+   <zorder>framesPlainTextEdit</zorder>
+   <zorder>msgListLabel</zorder>
+   <zorder>loadListMsgButton</zorder>
+   <zorder>sendMsgListButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>706</width>
-     <height>21</height>
+     <width>1151</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTelnet_packet_sniffer">

@@ -27,7 +27,7 @@ void TelnetClient::connect( QString host, QString port) {
 
 void TelnetClient::disconnect( QString host, QString port) {
 
-    /* graceful attempt through CLOZE_WAIT */
+    /* graceful attempt through CLOSE_WAIT */
     sockfd.disconnectFromHost();
 }
 
@@ -37,7 +37,8 @@ void TelnetClient::socketError(QAbstractSocket::SocketError err)
 
         switch ( err) {
         case QAbstractSocket::RemoteHostClosedError:
-            //break;
+            errorText = "The remote host closed connection. RST.";
+            break;
         case QAbstractSocket::HostNotFoundError:
             errorText = "The host was not found. Please check the "
                                         "host name and port.";
