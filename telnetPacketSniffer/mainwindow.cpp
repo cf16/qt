@@ -6,6 +6,12 @@ MainWindow::MainWindow( QWidget *parent) :
     ui( new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);"));
+    ui->hostLineEdit->setText( "10.0.0.90");
+    hostText = "10.0.0.90";
+    ui->portLineEdit->setText( "6502");
+    portText = "6502";
+    ui->msgLineEdit->setText( "TO\\NT4");
 
     QObject::connect( ui->hostLineEdit, SIGNAL( textChanged(QString)), this, SLOT( hostTextChanged(QString)));
     QObject::connect( ui->portLineEdit, &QLineEdit::textChanged, this, &MainWindow::portTextChanged);
@@ -79,11 +85,13 @@ void MainWindow::sendMsgBtnClicked()
 void MainWindow::telnetClientConnected()
 {
     ui->statusStateLabel->setText( "connected");
+    ui->msgsPlainTextEdit->appendPlainText( "Connected.");
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(85, 255, 127);"));
 }
 
 void MainWindow::telnetClientDisconnected()
 {
     ui->statusStateLabel->setText( "disconnected");
+    ui->msgsPlainTextEdit->appendPlainText( "Disconnected.");
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);"));
 }
