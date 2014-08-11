@@ -89,6 +89,7 @@ void MainWindow::sendMsgBtnClicked()
     QString msg = ui->msgLineEdit->text();
     if( msg.isEmpty())
         return;
+
     telnetClient.send( msg);
 }
 
@@ -97,6 +98,7 @@ void MainWindow::sendMsgList()
     QString msgs = ui->listPlainTextEdit->toPlainText();
     if( msgs.isEmpty())
         return;
+
     QString tvals = ui->timeIntervalTextEdit->toPlainText();
 
     telnetClient.sendMsgList( msgs, tvals);

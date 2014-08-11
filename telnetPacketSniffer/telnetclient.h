@@ -40,6 +40,9 @@ private:
     quint16 peerPort;
 };
 
+/*
+ * Sends a message list in separate thread
+*/
 class Worker : public QThread {
     Q_OBJECT
 
@@ -47,9 +50,8 @@ public:
     void run() Q_DECL_OVERRIDE {
 
         sockfd_ = new QTcpSocket();
-        bool b = sockfd_->setSocketDescriptor( fd_);
-        //QObject::connect( sockfd_, SIGNAL( readyRead()),
-        //        this, SLOT( read()));
+        sockfd_->setSocketDescriptor( fd_);
+
         for( int i = 0; i < msgList_.size(); i++) {
              send( msgList_[ i]);
              usleep( tvalsList_[ i].split( " ")[0].toInt());
@@ -66,8 +68,6 @@ public:
 signals:
     void listHasBeenSent();
     void msgSent( QString);
-public slots:
-    //int read();
 
 private:
     QStringList msgList_, tvalsList_;

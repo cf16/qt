@@ -29,7 +29,7 @@ void TelnetClient::connect( QString host, QString port) {
 void TelnetClient::disconnect( QString host, QString port) {
 
     if( sockfd.state() != QAbstractSocket::ConnectedState) {
-        socketError( QString( "host %1, port %2, socket not connected.")
+        socketError( QString( "Nothing to close. Host %1, port %2, socket not connected.")
                      .arg( host, port));
         return;
     }
@@ -98,8 +98,6 @@ void TelnetClient::send( QString msg)
 
 int TelnetClient::read()
 {
-    //QTextStream in( &sockfd);
-    //in.setVersion( QDataStream::Qt_5_3);
     int b = sockfd.bytesAvailable();
     if ( !sockfd.bytesAvailable())
         return 0;
@@ -141,14 +139,11 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
                          "Additional values will be omitted.");
     }
 
+    /* send message list in separate thread */
     Worker *w = new Worker( this, msgList, tvalsList, sockfd.socketDescriptor());
     QObject::connect( w, &Worker::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
     QObject::connect( w, &Worker::msgSent, this, &TelnetClient::msgSent);
     w->start();
-//    for( int i = 0; i < msgList.size(); i++) {
-//        send( msgList[ i]);
-//        usleep( tvalsList[ i].split( " ")[0].toInt());
-    //    }
 }
 
 void TelnetClient::listHasBeenSent()
@@ -192,20 +187,3 @@ void Worker::send( QString msg)
     sockfd_->flush();
     emit msgSent( msg);
 }
-
-//int Worker::read()
-//{
-//    //QTextStream in( &sockfd);
-//    //in.setVersion( QDataStream::Qt_5_3);
-//    int b = sockfd_->bytesAvailable();
-//    if ( !sockfd_->bytesAvailable())
-//        return 0;
-
-//    QString msg;
-//    QByteArray bytes = sockfd_->readAll();
-//    msg = QString::fromUtf8( bytes.data(), b);
-
-//    //emit socketData( msg);
-
-//    return msg.size();
-//}
