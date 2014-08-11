@@ -124,18 +124,18 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
 
     /* get time intervals */
     if ( tvals.isEmpty())
-        emit socketData( "Time interval list is empty, assuming 0.4 s...");
+        emit socketData( "Warning: Time interval list is empty, assuming 0.4 s...");
 
     QStringList tvalsList = tvals.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
 
     if ( tvalsList.size() < msgList.size()) {
-        emit socketData( "Time interval list is smaller than message list. "
+        emit socketData( "Warning: Time interval list is smaller than message list. "
                          "Assuming 0.4 s for missing values...");
         while( tvalsList.size() < msgList.size()) tvalsList.push_back( "400000");
     }
 
     if ( tvalsList.size() > msgList.size()) {
-        emit socketData( "Time interval list is greater than message list. "
+        emit socketData( "Warning: Time interval list is greater than message list. "
                          "Additional values will be omitted.");
     }
 

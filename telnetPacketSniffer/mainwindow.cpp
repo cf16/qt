@@ -31,13 +31,14 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( &telnetClient, SIGNAL( socketError(QString)), this, SLOT( displaySocketError(QString)));
     QObject::connect( &telnetClient, SIGNAL( socketData(QString)), this, SLOT( telnetData(QString)));
 
-    QObject::connect( ui->sendMsgButton, SIGNAL( clicked()), this, SLOT( sendMsgBtnClicked()));
+    QObject::connect( ui->sendMsgButton, SIGNAL( clicked()), this, SLOT( sendMsg()));
     QObject::connect( &telnetClient, SIGNAL( msgSent(QString)), this, SLOT( msgSent(QString)));
 
     QObject::connect( &telnetClient, SIGNAL( connected()), this, SLOT( telnetClientConnected()));
     QObject::connect( &telnetClient, SIGNAL( disconnected()), this, SLOT( telnetClientDisconnected()));
 
-    QObject::connect( ui->sendMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
+    QObject::connect( ui->sendAllMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
+    QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendNextMsg()));
 
     QObject::connect( ui->loadListMsgButton, SIGNAL( clicked()), this, SLOT( loadListMsg()));
 }
@@ -84,7 +85,7 @@ void MainWindow::msgSent( QString text)
     ui->msgsPlainTextEdit->appendPlainText( QString("->").append( text));
 }
 
-void MainWindow::sendMsgBtnClicked()
+void MainWindow::sendMsg()
 {
     QString msg = ui->msgLineEdit->text();
     if( msg.isEmpty())
@@ -102,6 +103,25 @@ void MainWindow::sendMsgList()
     QString tvals = ui->timeIntervalTextEdit->toPlainText();
 
     telnetClient.sendMsgList( msgs, tvals);
+}
+
+
+void MainWindow::sendNextMsg()
+{
+    static int idx = 0;
+    QString msgs = ui->listPlainTextEdit->toPlainText();
+
+    if( msgs.isEmpty())
+        return;
+
+    QStringList msgList = msgs.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
+    if( idx < msgList.size()) {
+        telnetClient.send( msgList[ idx++]);
+    } else {
+        ui->msgsPlainTextEdit->appendPlainText( "\nWarning: End of message list. Next call to 'send next' will send "
+                                                " the 1st message again.");
+        idx = 0;
+    }
 }
 
 void MainWindow::telnetClientConnected()

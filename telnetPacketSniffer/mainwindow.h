@@ -29,8 +29,10 @@ private slots:
     void telnetData( QString text);
     void msgSent( QString text);
 
-    void sendMsgBtnClicked();
+    void sendMsg();
     void sendMsgList();
+
+    void sendNextMsg();
 
     void telnetClientConnected();
     void telnetClientDisconnected();
