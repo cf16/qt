@@ -1,4 +1,5 @@
 #include "telnetclient.h"
+#include <unistd.h>
 
 TelnetClient::TelnetClient(QObject *parent) :
     QObject(parent), sockfd( this)
@@ -27,11 +28,24 @@ void TelnetClient::connect( QString host, QString port) {
 
 void TelnetClient::disconnect( QString host, QString port) {
 
+    if( sockfd.state() != QAbstractSocket::ConnectedState) {
+        socketError( QString( "host %1, port %2, socket not connected.")
+                     .arg( host, port));
+        return;
+    }
+
+    if ( peerName != sockfd.peerName() || peerPort != sockfd.peerPort()) {
+        socketError( QString( "Disconnect from host %1 port %2 requested, but socket is"
+                              " conencted to host %3 port %4.")
+                     .arg( host, port, peerName, QString::number( peerPort)));
+        return;
+    }
+
     /* graceful attempt through CLOSE_WAIT */
     sockfd.disconnectFromHost();
 }
 
-void TelnetClient::socketError(QAbstractSocket::SocketError err)
+void TelnetClient::socketError( QAbstractSocket::SocketError err)
 {
     QString errorText;
 
@@ -99,8 +113,53 @@ int TelnetClient::read()
     return msg.size();
 }
 
+void TelnetClient::sendMsgList( QString msgs, QString tvals)
+{
+    /*
+     * split, empty lines ( even something like "\n\n"
+     * or "\r\n\r\n" will not be skipped but we will
+     * skip them because of QString::SkipEmptyParts)
+     * We will add CR LF in send() method anyway
+    */
+
+    QStringList msgList = msgs.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
+
+    /* get time intervals */
+    if ( tvals.isEmpty())
+        emit socketData( "Time interval list is empty, assuming 0.4 s...");
+
+    QStringList tvalsList = tvals.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
+
+    if ( tvalsList.size() < msgList.size()) {
+        emit socketData( "Time interval list is smaller than message list. "
+                         "Assuming 0.4 s for missing values...");
+        while( tvalsList.size() < msgList.size()) tvalsList.push_back( "400000");
+    }
+
+    if ( tvalsList.size() > msgList.size()) {
+        emit socketData( "Time interval list is greater than message list. "
+                         "Additional values will be omitted.");
+    }
+
+    Worker *w = new Worker( this, msgList, tvalsList, sockfd.socketDescriptor());
+    QObject::connect( w, &Worker::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
+    QObject::connect( w, &Worker::msgSent, this, &TelnetClient::msgSent);
+    w->start();
+//    for( int i = 0; i < msgList.size(); i++) {
+//        send( msgList[ i]);
+//        usleep( tvalsList[ i].split( " ")[0].toInt());
+    //    }
+}
+
+void TelnetClient::listHasBeenSent()
+{
+    return;
+}
+
 void TelnetClient::socketConnected()
 {
+    peerName = sockfd.peerName();
+    peerPort = sockfd.peerPort();
     emit connected();
 }
 
@@ -108,3 +167,45 @@ void TelnetClient::socketDisconnected()
 {
     emit disconnected();
 }
+
+
+void Worker::send( QString msg)
+{
+   /*
+    * Internally, QTextStream uses a Unicode based buffer,
+    * and QTextCodec is used by QTextStream to automatically
+    * support different character sets
+   */
+
+    if ( msg.isEmpty())
+        return;
+
+    QByteArray bytes;
+    bytes.append( msg);
+    sockfd_->write( bytes);
+
+    /* send greetings */
+    char CR = 0x0d;
+    char LF = 0x0a;
+    sockfd_->write( &CR, 1);
+    sockfd_->write( &LF, 1);
+    sockfd_->flush();
+    emit msgSent( msg);
+}
+
+//int Worker::read()
+//{
+//    //QTextStream in( &sockfd);
+//    //in.setVersion( QDataStream::Qt_5_3);
+//    int b = sockfd_->bytesAvailable();
+//    if ( !sockfd_->bytesAvailable())
+//        return 0;
+
+//    QString msg;
+//    QByteArray bytes = sockfd_->readAll();
+//    msg = QString::fromUtf8( bytes.data(), b);
+
+//    //emit socketData( msg);
+
+//    return msg.size();
+//}

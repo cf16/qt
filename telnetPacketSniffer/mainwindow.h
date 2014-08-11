@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "telnetclient.h"
 
+class QCloseEvent;
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,23 +21,32 @@ public:
 private slots:
     void connectBtnClicked();
     void disconnectBtnClicked();
+
     void hostTextChanged( QString newHostText);
     void portTextChanged( QString newPortText);
+
     void displaySocketError( QString text);
     void telnetData( QString text);
     void msgSent( QString text);
+
     void sendMsgBtnClicked();
+    void sendMsgList();
+
     void telnetClientConnected();
     void telnetClientDisconnected();
+
+    void loadListMsg();
 
 signals:
     void openTelnetConnection( QString host, QString port);
     void closeTelnetConnection( QString host, QString port);
 
 private:
+    void closeEvent ( QCloseEvent *event);
     Ui::MainWindow *ui;
     TelnetClient telnetClient;
     QString hostText, portText;
+    bool telnetClientConnected_;
 };
 
 #endif // MAINWINDOW_H
