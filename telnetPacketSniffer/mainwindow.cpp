@@ -7,7 +7,8 @@
 
 MainWindow::MainWindow( QWidget *parent) :
     QMainWindow( parent),
-    ui( new Ui::MainWindow)
+    ui( new Ui::MainWindow),
+    nextMsgIdx_( 0)
 {
     ui->setupUi(this);
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);color: rgb(0, 0, 0);"));
@@ -23,22 +24,23 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->portLineEdit, &QLineEdit::textChanged, this, &MainWindow::portTextChanged);
 
     QObject::connect( ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::connectBtnClicked);
-    QObject::connect( this, &MainWindow::openTelnetConnection, &telnetClient, &TelnetClient::connect);
+    QObject::connect( this, &MainWindow::openTelnetConnection, &telnetClient_, &TelnetClient::connect);
 
     QObject::connect( ui->disconnectButton, &QAbstractButton::clicked, this, &MainWindow::disconnectBtnClicked);
-    QObject::connect( this, &MainWindow::closeTelnetConnection, &telnetClient, &TelnetClient::disconnect);
+    QObject::connect( this, &MainWindow::closeTelnetConnection, &telnetClient_, &TelnetClient::disconnect);
 
-    QObject::connect( &telnetClient, SIGNAL( socketError(QString)), this, SLOT( displaySocketError(QString)));
-    QObject::connect( &telnetClient, SIGNAL( socketData(QString)), this, SLOT( telnetData(QString)));
+    QObject::connect( &telnetClient_, SIGNAL( socketError(QString)), this, SLOT( displaySocketError(QString)));
+    QObject::connect( &telnetClient_, SIGNAL( socketData(QString)), this, SLOT( telnetData(QString)));
 
     QObject::connect( ui->sendMsgButton, SIGNAL( clicked()), this, SLOT( sendMsg()));
-    QObject::connect( &telnetClient, SIGNAL( msgSent(QString)), this, SLOT( msgSent(QString)));
+    QObject::connect( &telnetClient_, SIGNAL( msgSent(QString)), this, SLOT( msgSent(QString)));
 
-    QObject::connect( &telnetClient, SIGNAL( connected()), this, SLOT( telnetClientConnected()));
-    QObject::connect( &telnetClient, SIGNAL( disconnected()), this, SLOT( telnetClientDisconnected()));
+    QObject::connect( &telnetClient_, SIGNAL( connected()), this, SLOT( telnetClientConnected()));
+    QObject::connect( &telnetClient_, SIGNAL( disconnected()), this, SLOT( telnetClientDisconnected()));
 
     QObject::connect( ui->sendAllMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
     QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendNextMsg()));
+    QObject::connect( ui->resetNextBtn, SIGNAL( clicked()), this, SLOT( resetNext()));
 
     QObject::connect( ui->loadListMsgButton, SIGNAL( clicked()), this, SLOT( loadListMsg()));
 }
@@ -91,7 +93,7 @@ void MainWindow::sendMsg()
     if( msg.isEmpty())
         return;
 
-    telnetClient.send( msg);
+    telnetClient_.send( msg);
 }
 
 void MainWindow::sendMsgList()
@@ -102,25 +104,24 @@ void MainWindow::sendMsgList()
 
     QString tvals = ui->timeIntervalTextEdit->toPlainText();
 
-    telnetClient.sendMsgList( msgs, tvals);
+    telnetClient_.sendMsgList( msgs, tvals);
 }
 
 
 void MainWindow::sendNextMsg()
 {
-    static int idx = 0;
     QString msgs = ui->listPlainTextEdit->toPlainText();
 
     if( msgs.isEmpty())
         return;
 
     QStringList msgList = msgs.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
-    if( idx < msgList.size()) {
-        telnetClient.send( msgList[ idx++]);
+    if( nextMsgIdx_  < msgList.size()) {
+        telnetClient_.send( msgList[ nextMsgIdx_ ++]);
     } else {
         ui->msgsPlainTextEdit->appendPlainText( "\nWarning: End of message list. Next call to 'send next' will send "
                                                 " the 1st message again.");
-        idx = 0;
+        nextMsgIdx_ = 0;
     }
 }
 
@@ -152,6 +153,11 @@ void MainWindow::loadListMsg()
     file.close();
 }
 
+void MainWindow::resetNext()
+{
+    nextMsgIdx_ = 0;
+}
+
 void MainWindow::closeEvent ( QCloseEvent *event)
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Simple question",
@@ -161,7 +167,7 @@ void MainWindow::closeEvent ( QCloseEvent *event)
     if ( resBtn != QMessageBox::Yes) {
         event->ignore();
     } else {
-        if ( telnetClientConnected_) telnetClient.disconnect( hostText, portText);
+        if ( telnetClientConnected_) telnetClient_.disconnect( hostText, portText);
         event->accept();
     }
 }

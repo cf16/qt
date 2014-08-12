@@ -1,3 +1,14 @@
+/*
+ * @brief Telnet client application
+ *
+ * with capability to send list of message with predefined
+ * time intervals between them. Uses asynchronous socket
+ * and handles sending messages in a separate thread
+ *
+ * @author Piotr Gregor peterg@sytel.com
+ * @date   10 Aug 2014
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -38,6 +49,7 @@ private slots:
     void telnetClientDisconnected();
 
     void loadListMsg();
+    void resetNext();
 
 signals:
     void openTelnetConnection( QString host, QString port);
@@ -46,9 +58,10 @@ signals:
 private:
     void closeEvent ( QCloseEvent *event);
     Ui::MainWindow *ui;
-    TelnetClient telnetClient;
+    TelnetClient telnetClient_;
     QString hostText, portText;
     bool telnetClientConnected_;
+    int nextMsgIdx_;
 };
 
 #endif // MAINWINDOW_H
