@@ -1,3 +1,14 @@
+/*
+ * @brief Telnet client implementation
+ *
+ * with capability to send list of message with predefined
+ * time intervals between them. Uses asynchronous socket
+ * and handles sending messages in a separate thread
+ *
+ * @author Piotr Gregor peterg@sytel.com
+ * @date   10 Aug 2014
+ */
+
 #ifndef TELNETCLIENT_H
 #define TELNETCLIENT_H
 

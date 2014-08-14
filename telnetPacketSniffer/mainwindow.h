@@ -41,8 +41,10 @@ private slots:
     void msgSent( QString text);
 
     void sendMsg();
-    void sendMsgList();
+    void sendStashedMsg();
+    void stashPopRevert();
 
+    void sendMsgList();
     void sendNextMsg();
 
     void telnetClientConnected();
@@ -51,12 +53,17 @@ private slots:
     void loadListMsg();
     void resetNext();
 
+    void highlightCurrentLine();
+    void sendThisOne();
+    void pickThisOne();
+
 signals:
     void openTelnetConnection( QString host, QString port);
     void closeTelnetConnection( QString host, QString port);
 
 private:
     void closeEvent ( QCloseEvent *event);
+
     Ui::MainWindow *ui;
     TelnetClient telnetClient_;
     QString hostText, portText;
