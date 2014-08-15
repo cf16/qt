@@ -33,7 +33,7 @@
     <item row="3" column="4">
      <widget class="QPushButton" name="sendNextMsgListButton">
       <property name="text">
-       <string>send next</string>
+       <string>send/next</string>
       </property>
      </widget>
     </item>

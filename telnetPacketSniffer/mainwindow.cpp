@@ -9,7 +9,7 @@
 MainWindow::MainWindow( QWidget *parent) :
     QMainWindow( parent),
     ui( new Ui::MainWindow),
-    nextMsgIdx_( 0)
+    currMsgIdx_( 0)
 {
     ui->setupUi(this);
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);color: rgb(0, 0, 0);"));
@@ -44,7 +44,7 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( &telnetClient_, SIGNAL( disconnected()), this, SLOT( telnetClientDisconnected()));
 
     QObject::connect( ui->sendAllMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
-    QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendNextMsg()));
+    QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgAndGoToTheNext()));
     QObject::connect( ui->resetNextBtn, SIGNAL( clicked()), this, SLOT( resetNext()));
     QObject::connect( ui->loadListMsgButton, SIGNAL( clicked()), this, SLOT( loadListMsg()));
     QObject::connect( ui->listPlainTextEdit, SIGNAL( cursorPositionChanged()), this, SLOT( highlightCurrentLine()));
@@ -144,7 +144,7 @@ void MainWindow::sendMsgList()
 }
 
 
-void MainWindow::sendNextMsg()
+void MainWindow::sendMsgAndGoToTheNext()
 {
     if ( !telnetClientConnected_) {
         displaySocketError( "Not connected.");
@@ -157,13 +157,31 @@ void MainWindow::sendNextMsg()
         return;
 
     QStringList msgList = msgs.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
-    if( nextMsgIdx_  < msgList.size()) {
-        telnetClient_.send( msgList[ nextMsgIdx_ ++]);
+    if( currMsgIdx_  < msgList.size()) {
+        telnetClient_.send( msgList[ currMsgIdx_++]);
+
+        if( currMsgIdx_  < msgList.size()) {
+            /* move the cursor 1 line down */
+            QTextCursor tmp = ui->listPlainTextEdit->textCursor();
+            tmp.movePosition( QTextCursor::StartOfLine);
+            tmp.movePosition( QTextCursor::Down);
+
+            /* will trigger cursorPositionChanged() and in result highlightCurrentLine() */
+            ui->listPlainTextEdit->setTextCursor( tmp);
+        }
     } else {
         ui->msgsPlainTextEdit->appendPlainText( "\nWarning: End of message list. Next call to 'send next' will send "
                                                 " the 1st message again.");
-        nextMsgIdx_ = 0;
+        resetNext();
     }
+
+//    /* move the cursor 1 line down */
+//    QTextCursor tmp = ui->listPlainTextEdit->textCursor();
+//    tmp.movePosition( QTextCursor::StartOfLine);
+//    tmp.movePosition( QTextCursor::Down);
+
+//    /* will trigger cursorPositionChanged() and in result highlightCurrentLine() */
+//    ui->listPlainTextEdit->setTextCursor( tmp);
 }
 
 void MainWindow::telnetClientConnected()
@@ -203,7 +221,16 @@ void MainWindow::loadListMsg()
 
 void MainWindow::resetNext()
 {
-    nextMsgIdx_ = 0;
+    currMsgIdx_ = 0;
+
+    /* move the cursor to begin */
+    QTextCursor tmp = ui->listPlainTextEdit->textCursor();
+    tmp.movePosition( QTextCursor::StartOfLine);
+    while ( tmp.blockNumber() > 0)
+        tmp.movePosition( QTextCursor::Up);
+
+    /* will trigger cursorPositionChanged() and in result highlightCurrentLine() */
+    ui->listPlainTextEdit->setTextCursor( tmp);
 }
 
 void MainWindow::highlightCurrentLine()
@@ -223,6 +250,22 @@ void MainWindow::highlightCurrentLine()
     }
 
     ui->listPlainTextEdit->setExtraSelections(extraSelections);
+
+    /* update nextMsgIdx_ */
+    QTextCursor tmp = ui->listPlainTextEdit->textCursor();
+    int p1 = tmp.position();
+    int b1 = tmp.positionInBlock();
+    int l1 = tmp.blockNumber();
+    tmp.movePosition(( QTextCursor::StartOfLine));
+    int currentLine = 0;
+    int p2 = tmp.position();
+    int b2 = tmp.positionInBlock();
+    int l2 = tmp.blockNumber();
+//    while( tmp.positionInBlock()>0) {
+//        tmp.movePosition( QTextCursor::Up);
+//        ++currentLine;
+//    }
+    currMsgIdx_ = tmp.blockNumber();
 }
 
 void MainWindow::sendThisOne()

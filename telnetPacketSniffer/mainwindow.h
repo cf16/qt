@@ -45,7 +45,7 @@ private slots:
     void stashPopRevert();
 
     void sendMsgList();
-    void sendNextMsg();
+    void sendMsgAndGoToTheNext();
 
     void telnetClientConnected();
     void telnetClientDisconnected();
@@ -68,7 +68,7 @@ private:
     TelnetClient telnetClient_;
     QString hostText, portText;
     bool telnetClientConnected_;
-    int nextMsgIdx_;
+    int currMsgIdx_;
 };
 
 #endif // MAINWINDOW_H

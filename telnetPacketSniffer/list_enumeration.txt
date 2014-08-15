@@ -1,0 +1,9 @@
+E1\TXabc_tenants
+EA\TXabc_allagents_anytenant\TDdefault\CNsystem\LD2
+EC\TXabc_campaigns
+EG\TDdefaukt\TXabc_allgroups\CNsystem
+EI\TXallcallscompleted\TDme
+EN\TXallwarnings&errors\FA\SE4
+ES\TXabc_switches
+ET\TXabc_te_callinfo\CI\LC\CD
+
