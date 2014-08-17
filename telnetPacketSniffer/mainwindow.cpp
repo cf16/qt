@@ -70,8 +70,7 @@ void MainWindow::connectBtnClicked()
 
 void MainWindow::disconnectBtnClicked()
 {
-    ui->msgsPlainTextEdit->appendPlainText( QString( "Closing connection to host %1, port %2...").arg( hostText, portText));
-            emit closeTelnetConnection( hostText, portText);
+    emit closeTelnetConnection( hostText, portText);
 }
 
 void MainWindow::hostTextChanged( QString newHostText)
@@ -342,7 +341,16 @@ void MainWindow::closeEvent ( QCloseEvent *event)
 
             if( !telnetClientConnected_) {
                 /* success */
-                QMessageBox::information( this, "Shutting down", "Disconnected. Now shutting down.");
+                QMessageBox msgBox2;
+                msgBox2.setText( "Shutting down");
+                msgBox2.setInformativeText( "Disconnected. Now we can safely shutdown.\nAre you sure?\n");
+                msgBox2.setStandardButtons( QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
+                int resBtn2 = msgBox2.exec();
+                //QMessageBox::information( this, "Shutting down", "Disconnected. Now shutting down.");
+                if ( resBtn2 != QMessageBox::Yes) {
+                    event->ignore();
+                    return;
+                }
             } else {
                 /* failure */
                 QMessageBox::StandardButton resBtn3 = QMessageBox::question( this, "Tricky question",

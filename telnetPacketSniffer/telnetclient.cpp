@@ -42,6 +42,7 @@ void TelnetClient::disconnect( QString host, QString port) {
     }
 
     /* graceful attempt through CLOSE_WAIT */
+    socketError( QString( "Closing connection to host %1, port %2...").arg( host, port));
     sockfd.disconnectFromHost();
 }
 
