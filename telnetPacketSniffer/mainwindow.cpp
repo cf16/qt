@@ -6,6 +6,9 @@
 #include <QFileDialog>
 #include <QTextBlock>
 
+#include <unistd.h>
+
+
 MainWindow::MainWindow( QWidget *parent) :
     QMainWindow( parent),
     ui( new Ui::MainWindow),
@@ -18,6 +21,7 @@ MainWindow::MainWindow( QWidget *parent) :
     ui->portLineEdit->setText( "6502");
     portText = "6502";
     ui->msgLineEdit->setText( "TO\\NT4");
+    ui->listPlainTextEdit->setLineWrapMode( QPlainTextEdit::NoWrap);
 
     telnetClientConnected_ = 0;
 
@@ -237,7 +241,7 @@ void MainWindow::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    if (!ui->listPlainTextEdit->isReadOnly()) {
+    if ( !ui->listPlainTextEdit->isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
         QColor lineColor = QColor(Qt::yellow).lighter(160);
@@ -249,23 +253,91 @@ void MainWindow::highlightCurrentLine()
         extraSelections.append(selection);
     }
 
-    ui->listPlainTextEdit->setExtraSelections(extraSelections);
+    ui->listPlainTextEdit->setExtraSelections( extraSelections);
 
-    /* update nextMsgIdx_ */
-    QTextCursor tmp = ui->listPlainTextEdit->textCursor();
-    int p1 = tmp.position();
-    int b1 = tmp.positionInBlock();
-    int l1 = tmp.blockNumber();
-    tmp.movePosition(( QTextCursor::StartOfLine));
-    int currentLine = 0;
-    int p2 = tmp.position();
-    int b2 = tmp.positionInBlock();
-    int l2 = tmp.blockNumber();
-//    while( tmp.positionInBlock()>0) {
-//        tmp.movePosition( QTextCursor::Up);
-//        ++currentLine;
-//    }
-    currMsgIdx_ = tmp.blockNumber();
+    /* update currMsgIdx_ */
+    currMsgIdx_ = cursorFirstLineInBlockNumber( ui->listPlainTextEdit);
+}
+
+int MainWindow::cursorLineNumber( const QPlainTextEdit *qPtedit)
+{
+    Q_ASSERT( qPtedit);
+    QTextCursor cursor = qPtedit->textCursor();
+    cursor.movePosition( QTextCursor::StartOfLine);
+
+    /* first line is indexed with 0 */
+    int lines = 0;
+    while( cursor.positionInBlock() > 0) {
+        cursor.movePosition( QTextCursor::Up);
+        ++lines;
+    }
+    QTextBlock block = cursor.block().previous();
+
+    while( block.isValid()) {
+        lines += block.lineCount();
+        block = block.previous();
+    }
+
+    return lines;
+}
+
+int MainWindow::cursorBlockNumber( const QPlainTextEdit *qPtedit)
+{
+    Q_ASSERT( qPtedit);
+    QTextCursor cursor = qPtedit->textCursor();
+    cursor.movePosition( QTextCursor::StartOfLine);
+
+    /* first block is indexed with 0 */
+    int blocks = 0;
+    while( cursor.positionInBlock() > 0) {
+        cursor.movePosition( QTextCursor::Up);
+    }
+    QTextBlock block = cursor.block().previous();
+
+    while( block.isValid()) {
+        block = block.previous();
+        ++blocks;
+    }
+
+    return blocks;
+}
+
+int MainWindow::cursorFirstLineInBlockNumber( const QPlainTextEdit *qPtedit)
+{
+    Q_ASSERT( qPtedit);
+    QTextCursor cursor = qPtedit->textCursor();
+    cursor.movePosition( QTextCursor::StartOfLine);
+
+    /* first line is indexed with 0 */
+    int lines = 0;
+    while( cursor.positionInBlock() > 0) {
+        cursor.movePosition( QTextCursor::Up);
+        --lines;
+    }
+    QTextBlock block = cursor.block().previous();
+
+    while( block.isValid()) {
+        lines += block.lineCount();
+        block = block.previous();
+    }
+
+    return lines;
+}
+
+void MainWindow::highlightCurrentBlock()
+{
+    QTextCursor cursor = ui->listPlainTextEdit->textCursor();
+    cursor.movePosition( QTextCursor::EndOfBlock);
+    cursor.movePosition( QTextCursor::StartOfLine);
+    ui->listPlainTextEdit->setTextCursor( cursor);
+    highlightCurrentLine();
+
+    /* while still not the first character */
+    while( cursor.positionInBlock() > 0) {
+        cursor.movePosition( QTextCursor::Up);
+        ui->listPlainTextEdit->setTextCursor( cursor);
+        highlightCurrentLine();
+    }
 }
 
 void MainWindow::sendThisOne()
@@ -291,14 +363,40 @@ void MainWindow::pickThisOne()
 
 void MainWindow::closeEvent ( QCloseEvent *event)
 {
-    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Simple question",
-                                                                tr( "Are you sure?\n"),
-                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::No);
+    QMessageBox msgBox;
+    msgBox.setText( "Simple question");
+    msgBox.setInformativeText( "Are you sure?\n");
+    msgBox.setStandardButtons( QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
+    int resBtn = msgBox.exec();
+
     if ( resBtn != QMessageBox::Yes) {
         event->ignore();
+        return;
     } else {
-        if ( telnetClientConnected_) telnetClient_.disconnect( hostText, portText);
+        if ( telnetClientConnected_) {
+            QMessageBox::information( this, "Closing connection",
+                                      QString( "Connection to host %1 port %2 is ESTABLISHED. "
+                                                                                  "Closing this conencection after clicking OK.")
+                                                                                             .arg( hostText, portText));
+            /* try to disconnect */
+            telnetClient_.disconnect( hostText, portText);
+
+            if( !telnetClientConnected_) {
+                /* success */
+                QMessageBox::information( this, "Shutting down", "Disconnected. Now shutting down.");
+            } else {
+                /* failure */
+                QMessageBox::StandardButton resBtn3 = QMessageBox::question( this, "Tricky question",
+                                                tr( "Conenction cannot be closed. Force the quit anyway?\n"),
+                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
+                /* resignation */
+                if ( resBtn3 != QMessageBox::Yes) {
+                    event->ignore();
+                    return;
+                }
+                /* close anyway */
+            }
+        }
         event->accept();
     }
 }

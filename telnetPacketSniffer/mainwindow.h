@@ -1,11 +1,11 @@
 /*
  * @brief Telnet client application
  *
- * with capability to send list of message with predefined
+ * with capability to send list of messages with predefined
  * time intervals between them. Uses asynchronous socket
  * and handles sending messages in a separate thread
  *
- * @author Piotr Gregor peterg@sytel.com
+ * @author Piotr Gregor peterg@sytelco.com
  * @date   10 Aug 2014
  */
 
@@ -16,6 +16,7 @@
 #include "telnetclient.h"
 
 class QCloseEvent;
+class QPlainTextEdit;
 
 namespace Ui {
 class MainWindow;
@@ -54,6 +55,10 @@ private slots:
     void resetNext();
 
     void highlightCurrentLine();
+    int cursorLineNumber( const QPlainTextEdit*);
+    int cursorBlockNumber( const QPlainTextEdit*);
+    int cursorFirstLineInBlockNumber( const QPlainTextEdit*);
+    void highlightCurrentBlock();
     void sendThisOne();
     void pickThisOne();
 

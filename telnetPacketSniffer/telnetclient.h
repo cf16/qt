@@ -52,7 +52,9 @@ private:
 };
 
 /*
- * Sends a message list in separate thread
+ * Sends a message list in a separate thread.
+ * Waits a specified ( or default) time interval
+ * before sending next message.
 */
 class Worker : public QThread {
     Q_OBJECT
