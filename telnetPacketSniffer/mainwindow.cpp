@@ -343,7 +343,7 @@ void MainWindow::closeEvent ( QCloseEvent *event)
                 /* success */
                 QMessageBox msgBox2;
                 msgBox2.setText( "Shutting down");
-                msgBox2.setInformativeText( "Disconnected. Now we can safely shutdown.\nAre you sure?\n");
+                msgBox2.setInformativeText( "Disconnected. Now we can safely shutdown.\nAre you sure?");
                 msgBox2.setStandardButtons( QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
                 int resBtn2 = msgBox2.exec();
                 //QMessageBox::information( this, "Shutting down", "Disconnected. Now shutting down.");
