@@ -50,7 +50,8 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->sendAllMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
     QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgAndGoToTheNext()));
     QObject::connect( ui->resetNextBtn, SIGNAL( clicked()), this, SLOT( resetNext()));
-    QObject::connect( ui->loadListMsgButton, SIGNAL( clicked()), this, SLOT( loadListMsg()));
+    QObject::connect( ui->loadListMsgBtn, SIGNAL( clicked()), this, SLOT( loadListMsg()));
+    QObject::connect( ui->saveAsListMsgBtn, SIGNAL( clicked()), this, SLOT( saveListMsg()));
     QObject::connect( ui->listPlainTextEdit, SIGNAL( cursorPositionChanged()), this, SLOT( highlightCurrentLine()));
     QObject::connect( ui->sendThisOneBtn, SIGNAL( clicked()), this, SLOT( sendThisOne()));
     QObject::connect( ui->pickThisOneBtn, SIGNAL( clicked()), this, SLOT( pickThisOne()));
@@ -223,6 +224,20 @@ void MainWindow::loadListMsg()
     }
 }
 
+void MainWindow::saveListMsg()
+{
+    QString fileName = QFileDialog::getSaveFileName( this, tr( "Save message list as"));
+    QFile file( fileName);
+
+    if( ! file.open( QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text))
+        return;
+
+    QTextStream in( &file);
+    in << ui->listPlainTextEdit->toPlainText();
+    file.flush();
+    file.close();
+}
+
 void MainWindow::resetNext()
 {
     currMsgIdx_ = 0;
@@ -259,49 +274,6 @@ void MainWindow::highlightCurrentLine()
     currMsgIdx_ = cursorFirstLineInBlockNumber( ui->listPlainTextEdit);
 }
 
-int MainWindow::cursorLineNumber( const QPlainTextEdit *qPtedit)
-{
-    Q_ASSERT( qPtedit);
-    QTextCursor cursor = qPtedit->textCursor();
-    cursor.movePosition( QTextCursor::StartOfLine);
-
-    /* first line is indexed with 0 */
-    int lines = 0;
-    while( cursor.positionInBlock() > 0) {
-        cursor.movePosition( QTextCursor::Up);
-        ++lines;
-    }
-    QTextBlock block = cursor.block().previous();
-
-    while( block.isValid()) {
-        lines += block.lineCount();
-        block = block.previous();
-    }
-
-    return lines;
-}
-
-int MainWindow::cursorBlockNumber( const QPlainTextEdit *qPtedit)
-{
-    Q_ASSERT( qPtedit);
-    QTextCursor cursor = qPtedit->textCursor();
-    cursor.movePosition( QTextCursor::StartOfLine);
-
-    /* first block is indexed with 0 */
-    int blocks = 0;
-    while( cursor.positionInBlock() > 0) {
-        cursor.movePosition( QTextCursor::Up);
-    }
-    QTextBlock block = cursor.block().previous();
-
-    while( block.isValid()) {
-        block = block.previous();
-        ++blocks;
-    }
-
-    return blocks;
-}
-
 int MainWindow::cursorFirstLineInBlockNumber( const QPlainTextEdit *qPtedit)
 {
     Q_ASSERT( qPtedit);
@@ -322,22 +294,6 @@ int MainWindow::cursorFirstLineInBlockNumber( const QPlainTextEdit *qPtedit)
     }
 
     return lines;
-}
-
-void MainWindow::highlightCurrentBlock()
-{
-    QTextCursor cursor = ui->listPlainTextEdit->textCursor();
-    cursor.movePosition( QTextCursor::EndOfBlock);
-    cursor.movePosition( QTextCursor::StartOfLine);
-    ui->listPlainTextEdit->setTextCursor( cursor);
-    highlightCurrentLine();
-
-    /* while still not the first character */
-    while( cursor.positionInBlock() > 0) {
-        cursor.movePosition( QTextCursor::Up);
-        ui->listPlainTextEdit->setTextCursor( cursor);
-        highlightCurrentLine();
-    }
 }
 
 void MainWindow::sendThisOne()
@@ -364,7 +320,7 @@ void MainWindow::pickThisOne()
 void MainWindow::closeEvent ( QCloseEvent *event)
 {
     QMessageBox msgBox;
-    msgBox.setText( "Simple question");
+    msgBox.setText( "Shut down");
     msgBox.setInformativeText( "Are you sure?\n");
     msgBox.setStandardButtons( QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
     int resBtn = msgBox.exec();

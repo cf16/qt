@@ -52,13 +52,12 @@ private slots:
     void telnetClientDisconnected();
 
     void loadListMsg();
+    void saveListMsg();
     void resetNext();
 
     void highlightCurrentLine();
-    int cursorLineNumber( const QPlainTextEdit*);
-    int cursorBlockNumber( const QPlainTextEdit*);
     int cursorFirstLineInBlockNumber( const QPlainTextEdit*);
-    void highlightCurrentBlock();
+
     void sendThisOne();
     void pickThisOne();
 
