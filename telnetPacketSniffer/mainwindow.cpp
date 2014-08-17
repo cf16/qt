@@ -227,6 +227,9 @@ void MainWindow::loadListMsg()
 void MainWindow::saveListMsg()
 {
     QString fileName = QFileDialog::getSaveFileName( this, tr( "Save message list as"));
+    if( fileName.isEmpty())
+            return;
+
     QFile file( fileName);
 
     if( ! file.open( QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text))
