@@ -1,5 +1,8 @@
 #include "telnetclient.h"
-#include <unistd.h>
+
+#ifndef Q_OS_WIN32
+    #include <unistd.h>
+#endif
 
 TelnetClient::TelnetClient(QObject *parent) :
     QObject(parent), sockfd( this)

@@ -6,7 +6,9 @@
 #include <QFileDialog>
 #include <QTextBlock>
 
-#include <unistd.h>
+#ifndef Q_OS_WIN32
+    #include <unistd.h>
+#endif
 
 
 MainWindow::MainWindow( QWidget *parent) :
@@ -354,7 +356,7 @@ void MainWindow::closeEvent ( QCloseEvent *event)
             } else {
                 /* failure */
                 QMessageBox::StandardButton resBtn3 = QMessageBox::question( this, "Tricky question",
-                                                tr( "Conenction cannot be closed. Force the quit anyway?\n"),
+                                                tr( "Connection cannot be closed. Force the quit anyway?\n"),
                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes);
                 /* resignation */
                 if ( resBtn3 != QMessageBox::Yes) {
