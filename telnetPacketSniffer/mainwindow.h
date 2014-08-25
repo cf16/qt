@@ -44,6 +44,7 @@ private slots:
     void sendMsg();
     void sendStashedMsg();
     void stashPopRevert();
+    void sendWebMsg();
 
     void sendMsgList();
     void sendMsgAndGoToTheNext();

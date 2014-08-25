@@ -99,6 +99,35 @@ void TelnetClient::send( QString msg)
     emit msgSent( msg);
 }
 
+/* send msg as "GET msg HTTP/1.0\r\n\r\n"
+ * e.g. send /finditem?path=OK request as
+ * "GET /finditem?path=OK HTTP/1.0\r\n" */
+void TelnetClient::sendWebRequest( QString msg)
+{
+   /*
+    * Internally, QTextStream uses a Unicode based buffer,
+    * and QTextCodec is used by QTextStream to automatically
+    * support different character sets
+   */
+
+    if ( msg.isEmpty())
+        return;
+    msg = "GET " + msg + " HTTP/1.0";
+
+    QByteArray bytes;
+    bytes.append( msg);
+    sockfd.write( bytes);
+
+    /* send greetings */
+    char CR = 0x0d;
+    char LF = 0x0a;
+    sockfd.write( &CR, 1);
+    sockfd.write( &LF, 1);
+    sockfd.write( &CR, 1);
+    sockfd.write( &LF, 1);
+
+    emit msgSent( msg);
+}
 
 int TelnetClient::read()
 {

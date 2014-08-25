@@ -39,10 +39,11 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( &telnetClient_, SIGNAL( socketError(QString)), this, SLOT( displaySocketError(QString)));
     QObject::connect( &telnetClient_, SIGNAL( socketData(QString)), this, SLOT( telnetData(QString)));
 
-    QObject::connect( ui->sendMsgButton, SIGNAL( clicked()), this, SLOT( sendMsg()));
+    QObject::connect( ui->sendMsgBtn, SIGNAL( clicked()), this, SLOT( sendMsg()));
     QObject::connect( ui->sendStashedBtn, SIGNAL( clicked()), this, SLOT( sendStashedMsg()));
     QObject::connect( ui->stashRevertBtn, SIGNAL( clicked()), this, SLOT( stashPopRevert()));
     QObject::connect( ui->popRevertBtn, SIGNAL( clicked()), this, SLOT( stashPopRevert()));
+    QObject::connect( ui->sendMsgWebBtn, SIGNAL( clicked()), this, SLOT( sendWebMsg()));
 
     QObject::connect( &telnetClient_, SIGNAL( msgSent(QString)), this, SLOT( msgSent(QString)));
 
@@ -111,6 +112,19 @@ void MainWindow::sendMsg()
 
     if( !msg.isEmpty())
         telnetClient_.send( msg);
+}
+
+void MainWindow::sendWebMsg()
+{
+    if ( !telnetClientConnected_) {
+        displaySocketError( "Not connected.");
+        return;
+    }
+
+    QString msg = ui->msgWebLineEdit->text();
+
+    if( !msg.isEmpty())
+        telnetClient_.sendWebRequest( msg);
 }
 
 void MainWindow::sendStashedMsg()

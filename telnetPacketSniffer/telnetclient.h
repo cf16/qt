@@ -30,6 +30,7 @@ public slots:
     void disconnect( QString host, QString port);
     void socketError(QAbstractSocket::SocketError);
     void send( QString);
+    void sendWebRequest( QString);
     int read();
     void sendMsgList( QString, QString);
     void listHasBeenSent();

@@ -168,6 +168,16 @@
     </item>
     <item row="0" column="1" colspan="7">
      <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="msgLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="2">
        <widget class="QPushButton" name="sendStashedBtn">
         <property name="text">
@@ -176,19 +186,9 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QPushButton" name="sendMsgButton">
+       <widget class="QPushButton" name="sendMsgBtn">
         <property name="text">
          <string>send</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="msgLineEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -213,6 +213,26 @@
        <widget class="QPushButton" name="popRevertBtn">
         <property name="text">
          <string>pop / revert</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="msgWebLineEdit"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="sendMsgWebBtn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;x&lt;/span&gt; will be sent as&amp;quot;GET &lt;span style=&quot; font-weight:600;&quot;&gt;x&lt;/span&gt; HTTP/1.0\r\n\r\n&amp;quot;.&lt;/p&gt;&lt;p&gt;Remember to connect to the correct port (e.g7006) so web server (e.g:mongoose) is listening on it. Example of message:&lt;/p&gt;&lt;p&gt;/select?path=/ &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>send web request</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="msgWebLabel">
+        <property name="text">
+         <string>http message</string>
         </property>
        </widget>
       </item>
@@ -584,7 +604,7 @@ background-color: rgb(255, 255, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>1222</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTelnet_packet_sniffer">
