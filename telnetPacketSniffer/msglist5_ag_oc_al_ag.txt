@@ -1,0 +1,11 @@
+TO\NT4
+A1\TDme2
+C1\TDme2
+E1\TXABCTenants
+AL\CNsystem\AN2\ADme2\AE777
+OC\CNc1\DM0
+MC\CNsystem\TN661621072\AN2\FC
+AG\TDme2\CNsystem\GA19\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+OC\CNc2\DM5
+AL\CNc2\AN68\ADme2\AE8
+AG\TDdefault\CNc2\GA0107\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
