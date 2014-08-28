@@ -1,0 +1,25 @@
+TO\NT4
+
+A1\TDme7
+C1\TDme7
+OC\CNc7\TDme7\DM5
+AL\CNc7\TDme7\AN77\ADme77\AE7771
+AG\TDme7\CNc7\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme7\CNc7\GA7773\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme7\CNc7\GA7774\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+IC\CNc7\TDme7\SI004\TN400\DN7771
+
+// agent extension not unique globally!!! err in AL.Validate global_station_map & AG.Validate g_AddressMap
+A1\TDme8
+C1\TDme8
+OC\CNc8\TDme8\DM5
+// 
+AL\CNc8\TDme8\AN88\ADme88\AE7771
+AG\TDme8\CNc8\GA8881\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+IC\CNc7\TDme7\SI004\TN400\DN7771
+
+//now OK
+AL\CNc8\TDme8\AN88\ADme88\AE8882
+AG\TDme8\CNc8\GA8881\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AA\TDme8\CNc8\AN88
+IC\CNc8\TDme8\SI004\TN400\DN8882
