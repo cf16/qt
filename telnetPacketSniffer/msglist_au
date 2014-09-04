@@ -1,0 +1,81 @@
+TO\NT4
+A1\TDme7
+C1\TDme7
+OC\CNc7\TDme7\DM5
+AL\CNc7\TDme7\AN77\ADme77\AE7771
+AA\TDme7\CNc7\AN77
+AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+DG\TDme7\CNc7\GA7772\PR2
+AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme7\CNc7\GA7773\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme7\CNc7\GA7774\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AA\TDme7\CNc7\AN77
+IC\CNc7\TDme7\SI004\TN400\DN7772
+
+OC\CNc9\TDme7\DM5
+AL\CNc9\TDme7\AN77\ADme77\AE7771
+//ER EC103
+//and also
+AL\CNc9\TDme7\AN77\ADme77\AE27771
+//ER EC55
+
+AL\CNc7\TDme7\AN77\ADme77\AE7771
+AA\TDme7\CNc7\AN77
+AU\TDme7\AN77\PR2
+LO\CNc7\TDme7\AN77
+//now  can login AN77 again
+AL\CNc9\TDme7\AN77\ADme77\AE7771
+
+LO\CNc7\TDme7\AN77
+AL\CNc7\TDme7\AN13\ADme13\AE21
+LO\CNc7\TDme7\AN13
+
+//test AE per tenant - add same AE on same tenant but different cmapaign
+OC\CNc9\TDme7\DM5
+AG\TDme7\CNc9\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+
+AG\TDme8\CNc7\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme8\CNc7\GA7773\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\TDme8\CNc7\GA7774\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+
+// OK, no ER EC105 because queue is per campaign which is per tenant
+A1\TDme47
+C1\TDme47
+OC\CNc7\TDme47\DM5
+AL\CNc7\TDme47\AN277\ADme477\AE7771
+AG\TDme47\CNc7\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+LO\CNc7\TDme47\AN277
+
+// agent extension not unique globally!!! err in AL.Validate global_station_map & AG.Validate g_AddressMap
+A1\TDme8
+C1\TDme8
+OC\CNc8\TDme8\DM5
+// 
+AL\CNc8\TDme8\AN88\ADme88\AE7771
+AG\TDme8\CNc8\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+IC\CNc7\TDme7\SI004\TN400\DN7771
+
+// now OK
+AL\CNc8\TDme8\AN88\ADme88\AE8882
+AG\TDme8\CNc8\GA8881\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AA\TDme8\CNc8\AN88
+IC\CNc8\TDme8\SI004\TN400\DN8882
+
+// test si_param
+TO\NT4
+A1\TDme7
+C1\TDme7
+OC\CNc7\TDme7\DM5
+AL\CNc7\SIklop\TDme7\AN77\ADme77\AE7771
+
+// ER, EC105, address conflict
+OC\CNc7\TDme8\DM5
+AL\CNc7\TDme8\AN87\ADme87\AE103
+AG\TDme7\CNc7\GA7772\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+
+// now OK, no more ER EC103 the agent is not unique, now
+A1\TDme14
+C1\TDme14
+OC\CNc14\TDme14\DM5
+AL\CNc14\TDme14\AN1414\ADme14\AE7771
