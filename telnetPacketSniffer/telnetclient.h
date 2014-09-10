@@ -21,9 +21,11 @@ class TelnetClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit TelnetClient(QObject *parent = 0);
+    explicit TelnetClient( QString defaultInterval = "400000",
+                                        QObject *parent = 0);
 
 signals:
+    void stopMsgList();
 
 public slots:
     void connect( QString host, QString port);
@@ -38,6 +40,10 @@ public slots:
 private slots:
     void socketConnected();
     void socketDisconnected();
+    void setDefaultInterval( QString i)
+    {
+        defaultInterval_ = i;
+    }
 
 signals:
     void socketError( QString);
@@ -50,6 +56,7 @@ private:
     QTcpSocket sockfd;
     QString peerName;
     quint16 peerPort;
+    QString defaultInterval_;
 };
 
 /*
@@ -69,6 +76,11 @@ public:
         for( int i = 0; i < msgList_.size(); i++) {
              send( msgList_[ i]);
              usleep( tvalsList_[ i].split( " ")[0].toInt());
+             if ( isShutdownRequested_)
+             {
+                 emit listHasBeenSentIncomplete();
+                 return;
+             }
         }
 
         emit listHasBeenSent();
@@ -76,18 +88,24 @@ public:
 
 public:
     Worker( QObject *ptr, QStringList msgList, QStringList tvalsList, int fd) :
-        QThread( ptr), msgList_( msgList), tvalsList_( tvalsList), fd_( fd)
+        QThread( ptr), msgList_( msgList), tvalsList_( tvalsList), fd_( fd),
+        isShutdownRequested_( 0)
     {}
 
 signals:
     void listHasBeenSent();
+    void listHasBeenSentIncomplete();
     void msgSent( QString);
+
+public slots:
+    void shutdown() { isShutdownRequested_ = true; }
 
 private:
     QStringList msgList_, tvalsList_;
     QTcpSocket *sockfd_;
     int fd_;
     void send( QString);
+    bool isShutdownRequested_;
 };
 
 #endif // TELNETCLIENT_H

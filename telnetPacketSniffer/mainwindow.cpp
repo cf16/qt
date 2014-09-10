@@ -30,6 +30,8 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->hostLineEdit, SIGNAL( textChanged(QString)), this, SLOT( hostTextChanged(QString)));
     QObject::connect( ui->portLineEdit, &QLineEdit::textChanged, this, &MainWindow::portTextChanged);
 
+    QObject::connect( ui->defaultIntervalLineEdit, SIGNAL( textChanged(QString)), &telnetClient_, SLOT( setDefaultInterval(QString)));
+
     QObject::connect( ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::connectBtnClicked);
     QObject::connect( this, &MainWindow::openTelnetConnection, &telnetClient_, &TelnetClient::connect);
 
@@ -51,6 +53,8 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( &telnetClient_, SIGNAL( disconnected()), this, SLOT( telnetClientDisconnected()));
 
     QObject::connect( ui->sendAllMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgList()));
+    QObject::connect( ui->stopAllMsgListButton, SIGNAL( clicked()), &telnetClient_, SIGNAL( stopMsgList()));
+
     QObject::connect( ui->sendNextMsgListButton, SIGNAL( clicked()), this, SLOT( sendMsgAndGoToTheNext()));
     QObject::connect( ui->resetNextBtn, SIGNAL( clicked()), this, SLOT( resetNext()));
     QObject::connect( ui->loadListMsgBtn, SIGNAL( clicked()), this, SLOT( loadListMsg()));

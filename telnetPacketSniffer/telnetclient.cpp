@@ -4,8 +4,9 @@
     #include <unistd.h>
 #endif
 
-TelnetClient::TelnetClient(QObject *parent) :
-    QObject(parent), sockfd( this)
+TelnetClient::TelnetClient( QString defaultInterval, QObject *parent) :
+    QObject(parent), sockfd( this),
+    defaultInterval_( defaultInterval)
 {
     QObject::connect( &sockfd, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT( socketError(QAbstractSocket::SocketError)));
@@ -13,6 +14,7 @@ TelnetClient::TelnetClient(QObject *parent) :
             this, SLOT( read()));
     QObject::connect( &sockfd, SIGNAL( connected()), this, SLOT( socketConnected()));
     QObject::connect( &sockfd, SIGNAL( disconnected()), this, SLOT( socketDisconnected()));
+
 }
 
 void TelnetClient::connect( QString host, QString port) {
@@ -157,14 +159,14 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
 
     /* get time intervals */
     if ( tvals.isEmpty())
-        emit socketData( "Warning: Time interval list is empty, assuming 0.4 s...");
+        emit socketData( "Warning: Time interval list is empty, assuming default...");
 
     QStringList tvalsList = tvals.split( QRegExp( "\n|\r\n|\r"), QString::SkipEmptyParts);
 
     if ( tvalsList.size() < msgList.size()) {
         emit socketData( "Warning: Time interval list is smaller than message list. "
-                         "Assuming 0.4 s for missing values...");
-        while( tvalsList.size() < msgList.size()) tvalsList.push_back( "400000");
+                         "Assuming default for missing values...");
+        while( tvalsList.size() < msgList.size()) tvalsList.push_back( defaultInterval_);
     }
 
     if ( tvalsList.size() > msgList.size()) {
@@ -176,6 +178,7 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
     Worker *w = new Worker( this, msgList, tvalsList, sockfd.socketDescriptor());
     QObject::connect( w, &Worker::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
     QObject::connect( w, &Worker::msgSent, this, &TelnetClient::msgSent);
+    QObject::connect ( this, SIGNAL( stopMsgList()), w, SLOT( shutdown()));
     w->start();
 }
 
