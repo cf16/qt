@@ -31,9 +31,20 @@ AI\IDicr4\TDme3\TN301\DN113
 AI\IDicr2\TDme3\TN30\DN113\GA119
 IC\CNc3\TDme3\SI005\TN301\DN113
 
-AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
-AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
-DG\TDme7\CNc7\GA7772\PR2															
+AG\CNc1\TDme1\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+DG\TDme1\CNc1\GA111\PR0
+DG\TDme1\CNc1\GA7772\PR0
+GM\CNc1\TDme1\AN11\GA7772\ON\GO999
+AL\CNc1\TDme1\AN22\ADpeter2\AE112
+AA\TDme1\CNc1\AN22
+GM\CNc1\TDme1\AN22\GA7772\ON\GO998
+AL\CNc1\TDme1\AN33\ADpeter3\AE113
+AA\TDme1\CNc1\AN33
+GM\CNc1\TDme1\AN33\GA7772\ON\GO997
+AI\IDicr2\TDme1\TN123\DN8
+AI\IDicr1\TDme1\TN123\DN8\GA7772
+IC\CNc1\TDme1\SI005\TN123\DN8
+
 AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
 AG\TDme7\CNc7\GA7773\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
 AG\TDme7\CNc7\GA7774\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
