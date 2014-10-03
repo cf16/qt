@@ -15,6 +15,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QThread>
+#include <QStringList>
 
 /* handles tcp connection */
 class TelnetClient : public QObject
