@@ -9,6 +9,9 @@ AI\IDicr1\TDme1\TN*70\DN
 AI\IDicr1\TDme1\TN70\DN112\GA111
 IC\CNc1\TDme1\SI001\TN701\DN112
 
+EA\TXABC008\TDme1\LD3\PS3
+EC\TXABC005\TDme1
+
 landlord: DDI tenant: DDI
 TO\NT4
 A1\TDme2
@@ -81,7 +84,12 @@ IC\CNc1\TDme1\SI009\TN123\DN8
 
 TS\CNc1\TDme1\SI001\AE111\RS0
 
-AG\CNc1\TDme1\QP7\GA7774\RN16\VN12\OA300\QS1\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+AG\CNc1\TDme1\QP8\GA8884\RN16\VN12\OA300\QS1\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON
+DG\TDme1\CNc1\GA9994\PR1
+MG\TDme1\CNc1\GA9994\QP8
+
+EA\TXABC001\TDme1\LD3
+EG\TDme1\TXabcdef\CNc1
 
 AG\CNc7\TDme7\GA7772\RN16\VN12\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
 AG\TDme7\CNc7\GA7773\RN16\VN30\OA300\QS0\G1CallRecordMessage\G2QueueBusyMessage\G3HoldMusic\G4WaitMessage\ON															
