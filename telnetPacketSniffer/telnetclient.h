@@ -17,6 +17,8 @@
 #include <QThread>
 #include <QStringList>
 
+#include "packetsniffer.h"
+
 /* handles tcp connection */
 class TelnetClient : public QObject
 {
@@ -54,10 +56,12 @@ signals:
     void disconnected();
 
 private:
-    QTcpSocket sockfd;
-    QString peerName;
-    quint16 peerPort;
+    QTcpSocket sockfd_;
+    QString peerName_;
+    quint16 peerPort_;
     QString defaultInterval_;
+
+    PacketSniffer packetSniffer_;
 };
 
 /*

@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    telnetclient.cpp
+    telnetclient.cpp \
+    packetsniffer.cpp
 
 HEADERS  += mainwindow.h \
-    telnetclient.h
+    telnetclient.h \
+    packetsniffer.h
 
 FORMS    += mainwindow.ui

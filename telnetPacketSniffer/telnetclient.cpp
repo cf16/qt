@@ -5,21 +5,41 @@
 #endif
 
 TelnetClient::TelnetClient( QString defaultInterval, QObject *parent) :
-    QObject(parent), sockfd( this),
+    QObject(parent), sockfd_( this),
     defaultInterval_( defaultInterval)
 {
-    QObject::connect( &sockfd, SIGNAL(error(QAbstractSocket::SocketError)),
+    QObject::connect( &sockfd_, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT( socketError(QAbstractSocket::SocketError)));
-    QObject::connect( &sockfd, SIGNAL(readyRead()),
+    QObject::connect( &sockfd_, SIGNAL(readyRead()),
             this, SLOT( read()));
-    QObject::connect( &sockfd, SIGNAL( connected()), this, SLOT( socketConnected()));
-    QObject::connect( &sockfd, SIGNAL( disconnected()), this, SLOT( socketDisconnected()));
+    QObject::connect( &sockfd_, SIGNAL( connected()), this, SLOT( socketConnected()));
+    QObject::connect( &sockfd_, SIGNAL( disconnected()), this, SLOT( socketDisconnected()));
 
 }
 
 void TelnetClient::connect( QString host, QString port) {
 
-    sockfd.abort();
+    sockfd_.abort();
+
+    /*
+     * Now we are about starting to sniff on eth0 and given @port.
+     * We do it before connecting socket so we can see all traffic
+     * that took place with TCP handshake included.
+     * We don't call stop_sniffing() method here in case of a conenction
+     * attempt failure becasue we do it in socketDisconnected() slot
+     * which is tied to the disconnected() signal being emited by socket.
+     */
+    bool ok = false;
+    quint16 uport = port.toUInt( &ok);
+    if( !ok){
+        emit socketError( "Invalid port number.");
+        return;
+    }
+
+    int err = packetSniffer_.start_sniffing( uport);
+    if( err < 0) {
+
+    }
 
     /*
      * As a result of calling connectToHost(), one of two things can happen:
@@ -28,27 +48,27 @@ void TelnetClient::connect( QString host, QString port) {
      * 2. An error occurs. In this case, QTcpSocket will emit error(),
      * and TelnetClient::socketError() will be called.
      */
-    sockfd.connectToHost( host, port.toInt());
+    sockfd_.connectToHost( host, port.toInt());
 }
 
 void TelnetClient::disconnect( QString host, QString port) {
 
-    if( sockfd.state() != QAbstractSocket::ConnectedState) {
+    if( sockfd_.state() != QAbstractSocket::ConnectedState) {
         socketError( QString( "Nothing to close. Host %1, port %2, socket not connected.")
                      .arg( host, port));
         return;
     }
 
-    if ( peerName != sockfd.peerName() || peerPort != sockfd.peerPort()) {
+    if ( peerName_ != sockfd_.peerName() || peerPort_ != sockfd_.peerPort()) {
         socketError( QString( "Disconnect from host %1 port %2 requested, but socket is"
                               " conencted to host %3 port %4.")
-                     .arg( host, port, peerName, QString::number( peerPort)));
+                     .arg( host, port, peerName_, QString::number( peerPort_)));
         return;
     }
 
     /* graceful attempt through CLOSE_WAIT */
     socketError( QString( "Closing connection to host %1, port %2...").arg( host, port));
-    sockfd.disconnectFromHost();
+    sockfd_.disconnectFromHost();
 }
 
 void TelnetClient::socketError( QAbstractSocket::SocketError err)
@@ -71,7 +91,7 @@ void TelnetClient::socketError( QAbstractSocket::SocketError err)
             break;
         default:
             errorText = QString( "The following error occurred: %1.")
-                                     .arg( sockfd.errorString());
+                                     .arg( sockfd_.errorString());
         }
 
         emit socketError( errorText);
@@ -90,13 +110,13 @@ void TelnetClient::send( QString msg)
 
     QByteArray bytes;
     bytes.append( msg);
-    sockfd.write( bytes);
+    sockfd_.write( bytes);
 
     /* send greetings */
     char CR = 0x0d;
     char LF = 0x0a;
-    sockfd.write( &CR, 1);
-    sockfd.write( &LF, 1);
+    sockfd_.write( &CR, 1);
+    sockfd_.write( &LF, 1);
 
     emit msgSent( msg);
 }
@@ -118,27 +138,27 @@ void TelnetClient::sendWebRequest( QString msg)
 
     QByteArray bytes;
     bytes.append( msg);
-    sockfd.write( bytes);
+    sockfd_.write( bytes);
 
     /* send greetings */
     char CR = 0x0d;
     char LF = 0x0a;
-    sockfd.write( &CR, 1);
-    sockfd.write( &LF, 1);
-    sockfd.write( &CR, 1);
-    sockfd.write( &LF, 1);
+    sockfd_.write( &CR, 1);
+    sockfd_.write( &LF, 1);
+    sockfd_.write( &CR, 1);
+    sockfd_.write( &LF, 1);
 
     emit msgSent( msg);
 }
 
 int TelnetClient::read()
 {
-    int b = sockfd.bytesAvailable();
-    if ( !sockfd.bytesAvailable())
+    int b = sockfd_.bytesAvailable();
+    if ( !sockfd_.bytesAvailable())
         return 0;
 
     QString msg;
-    QByteArray bytes = sockfd.readAll();
+    QByteArray bytes = sockfd_.readAll();
     msg = QString::fromUtf8( bytes.data(), b);
 
     emit socketData( msg);
@@ -175,7 +195,7 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
     }
 
     /* send message list in separate thread */
-    Worker *w = new Worker( this, msgList, tvalsList, sockfd.socketDescriptor());
+    Worker *w = new Worker( this, msgList, tvalsList, sockfd_.socketDescriptor());
     QObject::connect( w, &Worker::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
     QObject::connect( w, &Worker::msgSent, this, &TelnetClient::msgSent);
     QObject::connect ( this, SIGNAL( stopMsgList()), w, SLOT( shutdown()));
@@ -189,13 +209,17 @@ void TelnetClient::listHasBeenSent()
 
 void TelnetClient::socketConnected()
 {
-    peerName = sockfd.peerName();
-    peerPort = sockfd.peerPort();
+    peerName_ = sockfd_.peerName();
+    peerPort_ = sockfd_.peerPort();
     emit connected();
 }
 
 void TelnetClient::socketDisconnected()
 {
+    int err = packetSniffer_.stop_sniffing();
+    if( err < 0) {
+
+    }
     emit disconnected();
 }
 
