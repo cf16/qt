@@ -2,14 +2,65 @@
 #define PACKETSNIFFER_H
 
 #include <QtGlobal>
+#include <QObject>
+#include <QThread>
 
-class PacketSniffer
+class QPlainTextEdit;
+class PcapWorker;
+typedef struct pcap pcap_t;
+
+class PacketSniffer : public QObject
 {
+    Q_OBJECT
 public:
-    explicit PacketSniffer();
+    explicit PacketSniffer( QObject *parent = 0);
 
-    int start_sniffing( quint16 port);
+    int start_sniffing( quint16 port, QPlainTextEdit *base64Output, QPlainTextEdit *binaryOutput,
+                        QPlainTextEdit *asciiOutput, QString filter);
     int stop_sniffing();
+
+signals:
+    void base64TextReady( QString text);
+    void binaryTextReady( QString text);
+    void asciiTextReady( QString text);
+    void allTextReady( QString text);
+    void pcapError( QString);
+
+private:
+    QPlainTextEdit *base64Output_;
+    QPlainTextEdit *binaryOutput_;
+    QPlainTextEdit *asciiOutput_;
+    PcapWorker *worker_;
+};
+
+
+class PcapWorker : public QThread {
+    Q_OBJECT
+public:
+    void run() Q_DECL_OVERRIDE;
+    PcapWorker( QObject *ptr = 0) : QThread( ptr) {}
+    PcapWorker( QObject *ptr, QPlainTextEdit *base64Output,
+            QPlainTextEdit *binaryOutput, QPlainTextEdit *asciiOutput, QString filter);
+    static PcapWorker contact_;
+
+signals:
+    void base64TextReady( QString text);
+    void binaryTextReady( QString text);
+    void asciiTextReady( QString text);
+    void allTextReady( QString text);
+    void pcapError( QString);
+
+private:
+    void errAllWindows( QString text);
+    pcap_t* open_pcap_socket( char* device, const char* bpfstr);
+    static void parse_frame( u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr);
+    QPlainTextEdit *base64Output_;
+    QPlainTextEdit *binaryOutput_;
+    QPlainTextEdit *asciiOutput_;
+    QString bp_filter_;
+    int link_type_;
+    static int link_header_len_;
+    int packets_;
 };
 
 #endif // PACKETSNIFFER_H

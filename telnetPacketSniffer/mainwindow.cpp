@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "packetsniffer.h"
+
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -62,6 +64,13 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->listPlainTextEdit, SIGNAL( cursorPositionChanged()), this, SLOT( highlightCurrentLine()));
     QObject::connect( ui->sendThisOneBtn, SIGNAL( clicked()), this, SLOT( sendThisOne()));
     QObject::connect( ui->pickThisOneBtn, SIGNAL( clicked()), this, SLOT( pickThisOne()));
+
+    /* Connect packet sniffer. */
+    QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)));
+    QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -72,7 +81,31 @@ MainWindow::~MainWindow()
 void MainWindow::connectBtnClicked()
 {
     ui->msgsPlainTextEdit->appendPlainText( QString( "Connecting to host %1, port %2...").arg( hostText, portText));
-            emit openTelnetConnection( hostText, portText);
+
+    /*
+     * Now we are about starting to sniff on eth0 and given @port.
+     * We do it before connecting socket so we can see all traffic
+     * that took place with TCP handshake included.
+     * We don't call stop_sniffing() method here in case of a conenction
+     * attempt failure becasue we do it in socketDisconnected() slot
+     * which is tied to the disconnected() signal being emited by socket.
+     */
+    bool ok = false;
+    quint16 uport = portText.toUInt( &ok);
+    if( !ok){
+        displaySocketError( "Invalid port number.");
+        return;
+    }
+
+//    packetSniffer_ = new PacketSniffer( ui->framesBase64PTEdit, ui->framesBinaryPTEdit,
+//                                        ui->framesAsciiPTEdit);
+    int err = packetSniffer_.start_sniffing( uport, ui->framesBase64PTEdit, ui->framesBinaryPTEdit,
+                                             ui->framesAsciiPTEdit, ui->pcapFilterText->text());
+    if( err < 0) {
+
+    }
+
+    emit openTelnetConnection( hostText, portText);
 }
 
 void MainWindow::disconnectBtnClicked()
@@ -219,6 +252,13 @@ void MainWindow::telnetClientConnected()
 void MainWindow::telnetClientDisconnected()
 {
     telnetClientConnected_ = false;
+
+    /* Stop sniffing raw packets. */
+    int err = packetSniffer_.stop_sniffing();
+    if( err < 0) {
+
+    }
+
     ui->statusStateLabel->setText( "disconnected");
     ui->msgsPlainTextEdit->appendPlainText( "Disconnected.");
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);color: rgb(0, 0, 0);"));
@@ -337,6 +377,28 @@ void MainWindow::pickThisOne()
 
     if ( !msg.isEmpty())
         ui->msgLineEdit->setText( msg);
+}
+
+void MainWindow::base64AppendText(QString text)
+{
+    ui->framesBase64PTEdit->appendPlainText( text);
+}
+
+void MainWindow::binaryAppendText(QString text)
+{
+    ui->framesBinaryPTEdit->appendPlainText( text);
+}
+
+void MainWindow::asciiAppendText(QString text)
+{
+    ui->framesAsciiPTEdit->appendPlainText( text);
+}
+
+void MainWindow::allFramesAppendText(QString text)
+{
+    ui->framesBase64PTEdit->appendPlainText( text);
+    ui->framesBinaryPTEdit->appendPlainText( text);
+    ui->framesAsciiPTEdit->appendPlainText( text);
 }
 
 void MainWindow::closeEvent ( QCloseEvent *event)

@@ -22,26 +22,6 @@ void TelnetClient::connect( QString host, QString port) {
     sockfd_.abort();
 
     /*
-     * Now we are about starting to sniff on eth0 and given @port.
-     * We do it before connecting socket so we can see all traffic
-     * that took place with TCP handshake included.
-     * We don't call stop_sniffing() method here in case of a conenction
-     * attempt failure becasue we do it in socketDisconnected() slot
-     * which is tied to the disconnected() signal being emited by socket.
-     */
-    bool ok = false;
-    quint16 uport = port.toUInt( &ok);
-    if( !ok){
-        emit socketError( "Invalid port number.");
-        return;
-    }
-
-    int err = packetSniffer_.start_sniffing( uport);
-    if( err < 0) {
-
-    }
-
-    /*
      * As a result of calling connectToHost(), one of two things can happen:
      * 1. The connection is established. In this case QTcpSocket will emit
      * readyRead() every time it receives a block of data.
@@ -195,11 +175,11 @@ void TelnetClient::sendMsgList( QString msgs, QString tvals)
     }
 
     /* send message list in separate thread */
-    Worker *w = new Worker( this, msgList, tvalsList, sockfd_.socketDescriptor());
-    QObject::connect( w, &Worker::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
-    QObject::connect( w, &Worker::msgSent, this, &TelnetClient::msgSent);
-    QObject::connect ( this, SIGNAL( stopMsgList()), w, SLOT( shutdown()));
-    w->start();
+    msgListSender_ = new MessageListSender( this, msgList, tvalsList, sockfd_.socketDescriptor());
+    QObject::connect( msgListSender_, &MessageListSender::listHasBeenSent, this, &TelnetClient::listHasBeenSent);
+    QObject::connect( msgListSender_, &MessageListSender::msgSent, this, &TelnetClient::msgSent);
+    QObject::connect ( this, SIGNAL( stopMsgList()), msgListSender_, SLOT( shutdown()));
+    msgListSender_->start();
 }
 
 void TelnetClient::listHasBeenSent()
@@ -216,15 +196,11 @@ void TelnetClient::socketConnected()
 
 void TelnetClient::socketDisconnected()
 {
-    int err = packetSniffer_.stop_sniffing();
-    if( err < 0) {
-
-    }
     emit disconnected();
 }
 
 
-void Worker::send( QString msg)
+void MessageListSender::send( QString msg)
 {
    /*
     * Internally, QTextStream uses a Unicode based buffer,

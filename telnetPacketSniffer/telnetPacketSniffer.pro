@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
+LIBS    += -lpcap
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

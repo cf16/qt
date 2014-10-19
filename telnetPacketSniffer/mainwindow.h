@@ -14,6 +14,7 @@
 
 #include <QMainWindow>
 #include "telnetclient.h"
+#include "packetsniffer.h"
 
 class QCloseEvent;
 class QPlainTextEdit;
@@ -62,6 +63,11 @@ private slots:
     void sendThisOne();
     void pickThisOne();
 
+    void base64AppendText( QString text);
+    void binaryAppendText( QString text);
+    void asciiAppendText( QString text);
+    void allFramesAppendText( QString text);
+
 signals:
     void openTelnetConnection( QString host, QString port);
     void closeTelnetConnection( QString host, QString port);
@@ -74,6 +80,7 @@ private:
     QString hostText, portText;
     bool telnetClientConnected_;
     int currMsgIdx_;
+    PacketSniffer packetSniffer_;
 };
 
 #endif // MAINWINDOW_H

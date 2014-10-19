@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1222</width>
-    <height>712</height>
+    <height>807</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,33 +30,6 @@
     </sizepolicy>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="7" column="3" colspan="2">
-     <widget class="QPushButton" name="sendThisOneBtn">
-      <property name="text">
-       <string>send this one</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="5" colspan="2">
-     <widget class="QPushButton" name="pickThisOneBtn">
-      <property name="text">
-       <string>pick this one</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="3">
-     <widget class="QPushButton" name="sendAllMsgListButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>send all</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1" colspan="7">
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="1">
@@ -73,6 +46,13 @@
        <widget class="QPushButton" name="sendStashedBtn">
         <property name="text">
          <string>send</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="msgWebLabel">
+        <property name="text">
+         <string>http message</string>
         </property>
        </widget>
       </item>
@@ -120,30 +100,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="msgWebLabel">
-        <property name="text">
-         <string>http message</string>
-        </property>
-       </widget>
-      </item>
      </layout>
-    </item>
-    <item row="7" column="1">
-     <widget class="QLabel" name="framesLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>3</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>frames</string>
-      </property>
-     </widget>
     </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
@@ -415,26 +372,15 @@ background-color: rgb(255, 255, 0);</string>
       </item>
      </layout>
     </item>
-    <item row="5" column="7">
-     <widget class="QLabel" name="defaultIntervalLbl">
-      <property name="text">
-       <string>default</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="4">
-     <widget class="QPushButton" name="sendNextMsgListButton">
-      <property name="text">
-       <string>send/next</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0" colspan="8">
+    <item row="9" column="0" colspan="8">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QPlainTextEdit" name="msgsPlainTextEdit">
+      <item row="12" column="3">
+       <widget class="QPlainTextEdit" name="framesAsciiPTEdit"/>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="framesBase64Lbl">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>3</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -442,45 +388,43 @@ background-color: rgb(255, 255, 0);</string>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
+        <property name="text">
+         <string>frames base64</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QPlainTextEdit" name="listPlainTextEdit">
+      <item row="7" column="0">
+       <widget class="QLabel" name="socketMessagesLabel">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>3</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
+         <string notr="true"/>
         </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="lineWidth">
-         <number>1</number>
+        <property name="text">
+         <string>socket messages</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QPlainTextEdit" name="timeIntervalTextEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="11" column="4">
+       <widget class="QLabel" name="discoveryChannelLbl">
+        <property name="text">
+         <string>Discovery channel</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QPlainTextEdit" name="framesPlainTextEdit">
+      <item row="9" column="0" colspan="2">
+       <widget class="QPushButton" name="clearMsgBtn">
+        <property name="text">
+         <string>clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QPlainTextEdit" name="framesBase64PTEdit">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>3</horstretch>
@@ -501,121 +445,238 @@ background-color: rgb(255, 255, 0);</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="clearMsgBtn">
+      <item row="12" column="1" colspan="2">
+       <widget class="QPlainTextEdit" name="framesBinaryPTEdit"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QPushButton" name="resetNextBtn">
+        <property name="text">
+         <string>reset next</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="3">
+       <widget class="QPushButton" name="framesAsciiBtn">
         <property name="text">
          <string>clear</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="clearFramesBtn">
+      <item row="5" column="4">
+       <widget class="QLineEdit" name="defaultIntervalLineEdit">
+        <property name="text">
+         <string>400000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="sendThisOneBtn">
+        <property name="text">
+         <string>send this one</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QPushButton" name="framesBase64Btn">
         <property name="text">
          <string>clear</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="1" column="4">
+       <widget class="QPushButton" name="stopAllMsgListButton">
+        <property name="text">
+         <string>stop all</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="saveAsListMsgBtn">
+        <property name="text">
+         <string>save as</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="sendAllMsgListButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>send all</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="4">
+       <widget class="QPlainTextEdit" name="timeIntervalTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="2">
+       <widget class="QPlainTextEdit" name="msgsPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>3</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="3">
+       <widget class="QLabel" name="framesAsciiLbl">
+        <property name="text">
+         <string>frames ASCII</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="sendNextMsgListButton">
+        <property name="text">
+         <string>send/next</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="4">
+       <widget class="QPlainTextEdit" name="discoveryChannelPTEdit"/>
+      </item>
+      <item row="13" column="1" colspan="2">
+       <widget class="QPushButton" name="framesBinaryBtn">
+        <property name="text">
+         <string>clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2" colspan="2">
        <widget class="QPushButton" name="clearMsgListBtn">
         <property name="text">
          <string>clear</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
+      <item row="2" column="4">
+       <widget class="QLabel" name="defaultIntervalLbl">
+        <property name="text">
+         <string>default time interval</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="loadListMsgBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>load</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="4">
+       <widget class="QPushButton" name="discoveryChannelBtn">
+        <property name="text">
+         <string>clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="4">
+       <widget class="QLabel" name="timeLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>time interval</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QPushButton" name="pickThisOneBtn">
+        <property name="text">
+         <string>pick this one</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QLabel" name="framesBinaryLbl">
+        <property name="text">
+         <string>frames binary</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="4">
        <widget class="QPushButton" name="clearTvalsBtn">
         <property name="text">
          <string>clear</string>
         </property>
        </widget>
       </item>
+      <item row="7" column="2">
+       <widget class="QLabel" name="msgListLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>message list to be sent</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2" colspan="2">
+       <widget class="QPlainTextEdit" name="listPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>3</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="pcapFilterLbl">
+        <property name="text">
+         <string>pcap filter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLineEdit" name="pcapFilterText"/>
+      </item>
      </layout>
-    </item>
-    <item row="4" column="6">
-     <widget class="QPushButton" name="resetNextBtn">
-      <property name="text">
-       <string>reset next</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="socketMessagesLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>3</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>socket messages</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <widget class="QPushButton" name="loadListMsgBtn">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>load</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="7">
-     <widget class="QLabel" name="timeLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>time interval</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3" colspan="2">
-     <widget class="QLabel" name="msgListLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>message list to be sent</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="4">
-     <widget class="QPushButton" name="saveAsListMsgBtn">
-      <property name="text">
-       <string>save as</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="7">
-     <widget class="QLineEdit" name="defaultIntervalLineEdit">
-      <property name="text">
-       <string>400000</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="3">
-     <widget class="QPushButton" name="stopAllMsgListButton">
-      <property name="text">
-       <string>stop all</string>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -625,7 +686,7 @@ background-color: rgb(255, 255, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>1222</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTelnet_packet_sniffer">
@@ -713,22 +774,6 @@ background-color: rgb(255, 255, 0);</string>
    </hints>
   </connection>
   <connection>
-   <sender>clearFramesBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>framesPlainTextEdit</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>548</x>
-     <y>460</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>548</x>
-     <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>clearMsgBtn</sender>
    <signal>clicked()</signal>
    <receiver>msgsPlainTextEdit</receiver>
@@ -757,6 +802,54 @@ background-color: rgb(255, 255, 0);</string>
     <hint type="destinationlabel">
      <x>1152</x>
      <y>335</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>framesBase64Btn</sender>
+   <signal>clicked()</signal>
+   <receiver>framesBase64PTEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>761</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>653</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>framesBinaryBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>framesBinaryPTEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>538</x>
+     <y>761</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>538</x>
+     <y>653</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>framesAsciiBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>framesAsciiPTEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>936</x>
+     <y>761</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>936</x>
+     <y>653</y>
     </hint>
    </hints>
   </connection>

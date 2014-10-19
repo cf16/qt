@@ -17,7 +17,8 @@
 #include <QThread>
 #include <QStringList>
 
-#include "packetsniffer.h"
+class MessageListSender;
+class PacketSniffer;
 
 /* handles tcp connection */
 class TelnetClient : public QObject
@@ -61,7 +62,7 @@ private:
     quint16 peerPort_;
     QString defaultInterval_;
 
-    PacketSniffer packetSniffer_;
+    MessageListSender *msgListSender_;
 };
 
 /*
@@ -69,7 +70,7 @@ private:
  * Waits a specified ( or default) time interval
  * before sending next message.
 */
-class Worker : public QThread {
+class MessageListSender : public QThread {
     Q_OBJECT
 
 public:
@@ -92,7 +93,7 @@ public:
     }
 
 public:
-    Worker( QObject *ptr, QStringList msgList, QStringList tvalsList, int fd) :
+    MessageListSender( QObject *ptr, QStringList msgList, QStringList tvalsList, int fd) :
         QThread( ptr), msgList_( msgList), tvalsList_( tvalsList), fd_( fd),
         isShutdownRequested_( 0)
     {}
