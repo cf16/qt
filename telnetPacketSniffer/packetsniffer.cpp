@@ -58,7 +58,8 @@ PcapWorker::PcapWorker( QObject *ptr, QPlainTextEdit *base64Output,
     base64Output_( base64Output),
     binaryOutput_( binaryOutput),
     asciiOutput_( asciiOutput),
-    bp_filter_( filter)
+    bp_filter_( filter),            /* berkley pcap filter          */
+    packets_( 0)                    /* infinite number of packets   */
 {
 }
 
@@ -70,9 +71,8 @@ void PcapWorker::errAllWindows( QString text)
     emit asciiTextReady( text);
 }
 
-void PcapWorker::run() Q_DECL_OVERRIDE {
-
-    char interface[256] = "";
+void PcapWorker::run() Q_DECL_OVERRIDE
+{
     char bp_filter[256] = "";
 
     std::string stdf = bp_filter_.toStdString();
@@ -83,6 +83,7 @@ void PcapWorker::run() Q_DECL_OVERRIDE {
     pcap_t *pd = open_pcap_socket( device, bp_filter);
 
     char err[PCAP_ERRBUF_SIZE+40];
+
     // Determine the datalink layer type.
     if ( ( link_type_ = pcap_datalink(pd)) < 0)
     {
@@ -91,7 +92,7 @@ void PcapWorker::run() Q_DECL_OVERRIDE {
         return;
     }
 
-    // Set the datalink layer header size.
+    /* Data link layer header size. */
     switch (link_type_)
     {
     case DLT_NULL:
@@ -184,7 +185,7 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
     char iphdrInfo[256], srcip[256], dstip[256];
     unsigned short id, seq;
 
-    // Skip the datalink layer header and get the IP header fields.
+    /* Skip the datalink layer header to IP header fields. */
     packetptr += link_header_len_;
     iphdr = (struct ip*)packetptr;
     strcpy(srcip, inet_ntoa(iphdr->ip_src));
@@ -193,8 +194,7 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
             ntohs(iphdr->ip_id), iphdr->ip_tos, iphdr->ip_ttl,
             4*iphdr->ip_hl, ntohs(iphdr->ip_len));
 
-    // Advance to the transport layer header then parse and display
-    // the fields based on the type of hearder: tcp, udp or icmp.
+    /* Advance to the transport layer header */
     char err[PCAP_ERRBUF_SIZE+40];
     packetptr += 4*iphdr->ip_hl;
     switch (iphdr->ip_p)

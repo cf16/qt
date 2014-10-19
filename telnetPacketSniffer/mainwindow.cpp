@@ -66,11 +66,11 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->pickThisOneBtn, SIGNAL( clicked()), this, SLOT( pickThisOne()));
 
     /* Connect packet sniffer. */
-    QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)));
-    QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)));
-    QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)));
-    QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)));
-    QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)), Qt::QueuedConnection);
+    QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)), Qt::QueuedConnection);
+    QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)), Qt::QueuedConnection);
+    QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)), Qt::QueuedConnection);
+    QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)), Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
@@ -97,14 +97,12 @@ void MainWindow::connectBtnClicked()
         return;
     }
 
-//    packetSniffer_ = new PacketSniffer( ui->framesBase64PTEdit, ui->framesBinaryPTEdit,
-//                                        ui->framesAsciiPTEdit);
     int err = packetSniffer_.start_sniffing( uport, ui->framesBase64PTEdit, ui->framesBinaryPTEdit,
                                              ui->framesAsciiPTEdit, ui->pcapFilterText->text());
     if( err < 0) {
 
     }
-
+sleep( 2);
     emit openTelnetConnection( hostText, portText);
 }
 
