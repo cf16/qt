@@ -67,11 +67,15 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->pickThisOneBtn, SIGNAL( clicked()), this, SLOT( pickThisOne()));
 
     /* Connect packet sniffer. */
-    QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)), Qt::QueuedConnection);
-    QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)), Qt::QueuedConnection);
-    QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)), Qt::QueuedConnection);
-    QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)), Qt::QueuedConnection);
-    QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)), Qt::QueuedConnection);
+    QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)));
+    QObject::connect ( &packetSniffer_, SIGNAL( discoveryTextReady(QString)), this, SLOT( discoveryAppendText(QString)));
+    QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)));
+
+    QObject::connect( ui->startSniffingBtn, SIGNAL( clicked()), this, SLOT( startSniffing()));
+    QObject::connect( ui->stopSniffingBtn, SIGNAL( clicked()), this, SLOT( stopSniffing()));
 }
 
 MainWindow::~MainWindow()
@@ -82,28 +86,6 @@ MainWindow::~MainWindow()
 void MainWindow::connectBtnClicked()
 {
     ui->msgsPlainTextEdit->appendPlainText( QString( "Connecting to host %1, port %2...").arg( hostText, portText));
-
-    /*
-     * Now we are about starting to sniff on eth0 and given @port.
-     * We do it before connecting socket so we can see all traffic
-     * that took place with TCP handshake included.
-     * We don't call stop_sniffing() method here in case of a conenction
-     * attempt failure becasue we do it in socketDisconnected() slot
-     * which is tied to the disconnected() signal being emited by socket.
-     */
-    bool ok = false;
-    quint16 uport = portText.toUInt( &ok);
-    if( !ok){
-        displaySocketError( "Invalid port number.");
-        return;
-    }
-
-    int err = packetSniffer_.start_sniffing( uport, ui->framesBase64PTEdit, ui->framesBinaryPTEdit,
-                                             ui->framesAsciiPTEdit, ui->pcapFilterText->text());
-    if( err < 0) {
-
-    }
-sleep( 2);
     emit openTelnetConnection( hostText, portText);
 }
 
@@ -378,26 +360,47 @@ void MainWindow::pickThisOne()
         ui->msgLineEdit->setText( msg);
 }
 
-void MainWindow::base64AppendText(QString text)
+void MainWindow::base64AppendText( QString text)
 {
     ui->framesBase64PTEdit->appendPlainText( text);
 }
 
-void MainWindow::binaryAppendText(QString text)
+void MainWindow::binaryAppendText( QString text)
 {
     ui->framesBinaryPTEdit->appendPlainText( text);
 }
 
-void MainWindow::asciiAppendText(QString text)
+void MainWindow::asciiAppendText( QString text)
 {
     ui->framesAsciiPTEdit->appendPlainText( text);
 }
 
-void MainWindow::allFramesAppendText(QString text)
+void MainWindow::allFramesAppendText( QString text)
 {
     ui->framesBase64PTEdit->appendPlainText( text);
     ui->framesBinaryPTEdit->appendPlainText( text);
     ui->framesAsciiPTEdit->appendPlainText( text);
+}
+
+void MainWindow::discoveryAppendText( QString text)
+{
+    ui->discoveryChannelPTEdit->appendPlainText( text);
+}
+
+void MainWindow::startSniffing()
+{
+    /*
+     * Now we are about starting to sniff on eth0 using given filter.
+     * We do it before connecting socket so we can see all traffic
+     * that took place with TCP handshake included.
+     * We don't call stop_sniffing() method here in case of a conenction
+     * attempt failure becasue we do it in socketDisconnected() slot
+     * which is tied to the disconnected() signal being emited by socket.
+     */
+    int err = packetSniffer_.start_sniffing( ui->pcapFilterText->text());
+    if( err < 0) {
+        displaySocketError( "start sniffing Error");
+    }
 }
 
 void MainWindow::closeEvent ( QCloseEvent *event)
@@ -445,6 +448,7 @@ void MainWindow::closeEvent ( QCloseEvent *event)
                 /* close anyway */
             }
         }
+
         event->accept();
     }
 }

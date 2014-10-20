@@ -676,6 +676,20 @@ background-color: rgb(255, 255, 0);</string>
       <item row="10" column="1">
        <widget class="QLineEdit" name="pcapFilterText"/>
       </item>
+      <item row="10" column="2">
+       <widget class="QPushButton" name="startSniffingBtn">
+        <property name="text">
+         <string>start sniffing</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="3">
+       <widget class="QPushButton" name="stopSniffingBtn">
+        <property name="text">
+         <string>stop sniffing</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -850,6 +864,22 @@ background-color: rgb(255, 255, 0);</string>
     <hint type="destinationlabel">
      <x>936</x>
      <y>653</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>discoveryChannelBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>discoveryChannelPTEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1141</x>
+     <y>761</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1141</x>
+     <y>662</y>
     </hint>
    </hints>
   </connection>

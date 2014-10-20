@@ -67,6 +67,8 @@ private slots:
     void binaryAppendText( QString text);
     void asciiAppendText( QString text);
     void allFramesAppendText( QString text);
+    void discoveryAppendText( QString text);
+    void startSniffing();
 
 signals:
     void openTelnetConnection( QString host, QString port);

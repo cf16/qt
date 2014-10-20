@@ -22,25 +22,25 @@ PacketSniffer::PacketSniffer(QObject *parent) :
     QObject( parent)
 {
     /* Connect signals to slots. */
-    QObject::connect ( &PcapWorker::contact_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( &PcapWorker::contact_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( &PcapWorker::contact_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( &PcapWorker::contact_, SIGNAL( pcapError(QString)), this, SIGNAL( pcapError(QString)), Qt::QueuedConnection);
-    QObject::connect ( &PcapWorker::contact_, SIGNAL( allTextReady(QString)), this, SIGNAL( allTextReady(QString)), Qt::QueuedConnection);
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)));
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)));
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)));
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( pcapError(QString)), this, SIGNAL( pcapError(QString)));
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( allTextReady(QString)), this, SIGNAL( allTextReady(QString)));
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( discoveryTextReady(QString)), this, SIGNAL( discoveryTextReady(QString)));
 }
 
-int PacketSniffer::start_sniffing( quint16 port, QPlainTextEdit *base64Output,
-                                   QPlainTextEdit *binaryOutput,
-                                   QPlainTextEdit *asciiOutput, QString filter)
+int PacketSniffer::start_sniffing( QString filter)
 {
     worker_ = new PcapWorker( this, base64Output_, binaryOutput_, asciiOutput_, filter);
 
     /* Connect signals to slots. */
-    QObject::connect ( worker_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( worker_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( worker_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)), Qt::QueuedConnection);
-    QObject::connect ( worker_, SIGNAL( pcapError(QString)), this, SIGNAL( pcapError(QString)), Qt::QueuedConnection);
-    QObject::connect ( worker_, SIGNAL( allTextReady(QString)), this, SIGNAL( allTextReady(QString)), Qt::QueuedConnection);
+    QObject::connect ( worker_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)));
+    QObject::connect ( worker_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)));
+    QObject::connect ( worker_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)));
+    QObject::connect ( worker_, SIGNAL( pcapError(QString)), this, SIGNAL( pcapError(QString)));
+    QObject::connect ( worker_, SIGNAL( allTextReady(QString)), this, SIGNAL( allTextReady(QString)));
+    QObject::connect ( worker_, SIGNAL( discoveryTextReady(QString)), this, SIGNAL( discoveryTextReady(QString)));
 
     /* start run() method */
     worker_->start();
@@ -115,13 +115,15 @@ void PcapWorker::run() Q_DECL_OVERRIDE
         return;
     }
 
+    emit errAllWindows( QString( "Started to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
+
     /* Start capturing packets. */
     if ( pcap_loop( pd, packets_, parse_frame, 0) < 0) {
         sprintf( err, "pcap_loop failed: %s\n", pcap_geterr(pd));
         emit errAllWindows( err);
     }
 
-    emit errAllWindows( QString( "Started to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
+    emit errAllWindows( QString( "Finished to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
 }
 
 
@@ -180,9 +182,61 @@ pcap_t* PcapWorker::open_pcap_socket( char *device, const char *bpfstr)
 
 void PcapWorker::parse_frame( u_char *user, const struct pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
+    printFrameInfo( frame_header, frame_ptr);
     printBase64( frame_header, frame_ptr);
     printBinary( frame_header, frame_ptr);
+    printAscii( frame_header, frame_ptr);
+}
 
+void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    QString frame64 = frame.toBase64();
+    frame64.append( 0x0d);
+    frame64.append( 0x0a);
+    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+
+    emit contact_.base64TextReady( frame64);
+}
+
+void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    QString frame64;
+
+    for( int i = 0; i < frame.size(); ++i) {
+        char c = frame[i];
+        std::bitset<8> b( c);
+        frame64.append( b.to_string().c_str());
+        frame64.append( 0x20);
+    }
+
+    frame64.append( 0x0d);
+    frame64.append( 0x0a);
+    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+
+    emit contact_.binaryTextReady( frame64);
+}
+
+void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    QString frame64;
+
+    for( int i = 0; i < frame.size(); ++i) {
+        char c = frame[i];
+        frame64.append( c);
+    }
+
+    frame64.append( 0x0d);
+    frame64.append( 0x0a);
+    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+
+    emit contact_.asciiTextReady( frame64);
+}
+
+void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
     struct ip* iphdr;
     struct icmphdr* icmphdr;
     struct tcphdr* tcphdr;
@@ -202,15 +256,16 @@ void PcapWorker::parse_frame( u_char *user, const struct pcap_pkthdr *frame_head
     /* Advance to the transport layer header */
     char err[PCAP_ERRBUF_SIZE+40];
     frame_ptr += 4*iphdr->ip_hl;
+
     switch (iphdr->ip_p)
     {
     case IPPROTO_TCP:
         tcphdr = (struct tcphdr*)frame_ptr;
         sprintf( err, "TCP  %s:%d -> %s:%d\n", srcip, ntohs(tcphdr->source),
                dstip, ntohs(tcphdr->dest));
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         sprintf( err, "%s\n", iphdrInfo);
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         sprintf( err,"%c%c%c%c%c%c Seq: 0x%x Ack: 0x%x Win: 0x%x TcpLen: %d\n",
                (tcphdr->urg ? 'U' : '*'),
                (tcphdr->ack ? 'A' : '*'),
@@ -220,61 +275,33 @@ void PcapWorker::parse_frame( u_char *user, const struct pcap_pkthdr *frame_head
                (tcphdr->fin ? 'F' : '*'),
                ntohl(tcphdr->seq), ntohl(tcphdr->ack_seq),
                ntohs(tcphdr->window), 4*tcphdr->doff);
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         break;
 
     case IPPROTO_UDP:
         udphdr = (struct udphdr*)frame_ptr;
         sprintf( err, "UDP  %s:%d -> %s:%d\n", srcip, ntohs(udphdr->source),
                dstip, ntohs(udphdr->dest));
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         sprintf( err, "%s\n", iphdrInfo);
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         break;
 
     case IPPROTO_ICMP:
         icmphdr = (struct icmphdr*)frame_ptr;
         sprintf( err, "ICMP %s -> %s\n", srcip, dstip);
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         sprintf( err, "%s\n", iphdrInfo);
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         memcpy(&id, (u_char*)icmphdr+4, 2);
         memcpy(&seq, (u_char*)icmphdr+6, 2);
         sprintf( err, "Type:%d Code:%d ID:%d Seq:%d\n", icmphdr->type, icmphdr->code,
                ntohs(id), ntohs(seq));
-        emit contact_.allTextReady( err);
+        emit contact_.discoveryTextReady( err);
         break;
     }
-    sprintf( err, "%s", "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
-    emit contact_.allTextReady( err);
-}
 
-void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
-{
-    QByteArray frame( (char*)frame_ptr, frame_header->len);
-    QString frame64 = frame.toBase64();
-    emit contact_.base64TextReady( frame64);
-}
+    sprintf( err, "%s", "+-+-+-+-+-+\n\n");
 
-void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
-{
-    QByteArray frame( (char*)frame_ptr, frame_header->len);
-    QString frame64;
-
-    for( int i = 0; i < frame.size(); ++i) {
-        char c = frame[i];
-        std::bitset<8> b( c);
-        frame64.append( b.to_string().c_str());
-        frame64.append( 0x20);
-    }
-
-    emit contact_.binaryTextReady( frame64);
-}
-
-void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
-{
-}
-
-void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
-{
+    emit contact_.discoveryTextReady( err);
 }

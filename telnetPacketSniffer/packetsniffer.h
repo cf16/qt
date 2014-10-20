@@ -17,8 +17,7 @@ class PacketSniffer : public QObject
 public:
     explicit PacketSniffer( QObject *parent = 0);
 
-    int start_sniffing( quint16 port, QPlainTextEdit *base64Output, QPlainTextEdit *binaryOutput,
-                        QPlainTextEdit *asciiOutput, QString filter);
+    int start_sniffing( QString filter);
     int stop_sniffing();
 
 signals:
@@ -26,6 +25,7 @@ signals:
     void binaryTextReady( QString text);
     void asciiTextReady( QString text);
     void allTextReady( QString text);
+    void discoveryTextReady( QString text);
     void pcapError( QString);
 
 private:
@@ -50,6 +50,7 @@ signals:
     void binaryTextReady( QString text);
     void asciiTextReady( QString text);
     void allTextReady( QString text);
+    void discoveryTextReady( QString text);
     void pcapError( QString);
 
 private:
