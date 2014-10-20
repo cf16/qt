@@ -41,6 +41,7 @@ int PacketSniffer::start_sniffing( quint16 port, QPlainTextEdit *base64Output,
     QObject::connect ( worker_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)), Qt::QueuedConnection);
     QObject::connect ( worker_, SIGNAL( pcapError(QString)), this, SIGNAL( pcapError(QString)), Qt::QueuedConnection);
     QObject::connect ( worker_, SIGNAL( allTextReady(QString)), this, SIGNAL( allTextReady(QString)), Qt::QueuedConnection);
+    QObject::connect ( worker_, SIGNAL( discoveryTextReady(QString)), this, SIGNAL( discoveryReady(QString)), Qt::QueuedConnection);
 
     /* start run() method */
     worker_->start();

@@ -71,6 +71,7 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)), Qt::QueuedConnection);
     QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)), Qt::QueuedConnection);
     QObject::connect ( &packetSniffer_, SIGNAL( allTextReady(QString)), this, SLOT( allFramesAppendText(QString)), Qt::QueuedConnection);
+    QObject::connect ( &packetSniffer_, SIGNAL( discoveryTextReady(QString)), this, SLOT( discoveryAppendText(QString)), Qt::QueuedConnection);
     QObject::connect( &packetSniffer_, SIGNAL( pcapError(QString)), this, SLOT( displaySocketError(QString)), Qt::QueuedConnection);
 }
 
@@ -378,26 +379,31 @@ void MainWindow::pickThisOne()
         ui->msgLineEdit->setText( msg);
 }
 
-void MainWindow::base64AppendText(QString text)
+void MainWindow::base64AppendText( QString text)
 {
     ui->framesBase64PTEdit->appendPlainText( text);
 }
 
-void MainWindow::binaryAppendText(QString text)
+void MainWindow::binaryAppendText( QString text)
 {
     ui->framesBinaryPTEdit->appendPlainText( text);
 }
 
-void MainWindow::asciiAppendText(QString text)
+void MainWindow::asciiAppendText( QString text)
 {
     ui->framesAsciiPTEdit->appendPlainText( text);
 }
 
-void MainWindow::allFramesAppendText(QString text)
+void MainWindow::allFramesAppendText( QString text)
 {
     ui->framesBase64PTEdit->appendPlainText( text);
     ui->framesBinaryPTEdit->appendPlainText( text);
     ui->framesAsciiPTEdit->appendPlainText( text);
+}
+
+void MainWindow::discoveryAppendText( QString text)
+{
+    ui->discoveryChannelPTEdit->appendPlainText( text);
 }
 
 void MainWindow::closeEvent ( QCloseEvent *event)
