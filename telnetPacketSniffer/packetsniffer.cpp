@@ -22,6 +22,7 @@ PacketSniffer::PacketSniffer(QObject *parent) :
     QObject( parent)
 {
     /* Connect signals to slots. */
+    QObject::connect ( &PcapWorker::contact_, SIGNAL( hexTextReady(QString)), this, SIGNAL( hexTextReady(QString)));
     QObject::connect ( &PcapWorker::contact_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)));
     QObject::connect ( &PcapWorker::contact_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)));
     QObject::connect ( &PcapWorker::contact_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)));
@@ -35,6 +36,7 @@ int PacketSniffer::start_sniffing( QString filter)
     worker_ = new PcapWorker( this, base64Output_, binaryOutput_, asciiOutput_, filter);
 
     /* Connect signals to slots. */
+    QObject::connect ( worker_, SIGNAL( hexTextReady(QString)), this, SIGNAL( hexTextReady(QString)));
     QObject::connect ( worker_, SIGNAL( base64TextReady(QString)), this, SIGNAL( base64TextReady(QString)));
     QObject::connect ( worker_, SIGNAL( binaryTextReady(QString)), this, SIGNAL( binaryTextReady(QString)));
     QObject::connect ( worker_, SIGNAL( asciiTextReady(QString)), this, SIGNAL( asciiTextReady(QString)));
@@ -68,6 +70,7 @@ PcapWorker::PcapWorker( QObject *ptr, QPlainTextEdit *base64Output,
 void PcapWorker::errAllWindows( QString text)
 {
     emit pcapError( text);
+    emit hexTextReady( text);
     emit base64TextReady( text);
     emit binaryTextReady( text);
     emit asciiTextReady( text);
@@ -183,20 +186,48 @@ pcap_t* PcapWorker::open_pcap_socket( char *device, const char *bpfstr)
 void PcapWorker::parse_frame( u_char *user, const struct pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
     printFrameInfo( frame_header, frame_ptr);
+    printHex( frame_header, frame_ptr);
     printBase64( frame_header, frame_ptr);
     printBinary( frame_header, frame_ptr);
     printAscii( frame_header, frame_ptr);
+}
+
+void PcapWorker::printHex(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    QString frameHex = frame.toHex();
+    QString frameWithSpaces;
+    int i = 0;
+
+    while( i < frameHex.size()) {
+        frameWithSpaces.append( frameHex[i]);
+        ++i;
+        if( !(i%2)) frameWithSpaces.append( 0x20);
+    }
+
+    frameWithSpaces.append( 0x0d); /* CR */
+    frameWithSpaces.append( 0x0a); /* LF */
+
+    emit contact_.hexTextReady( frameWithSpaces);
 }
 
 void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
     QByteArray frame( (char*)frame_ptr, frame_header->len);
     QString frame64 = frame.toBase64();
-    frame64.append( 0x0d);
-    frame64.append( 0x0a);
-    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+    QString frameWithSpaces;
+    int i = 0;
 
-    emit contact_.base64TextReady( frame64);
+    while( i < frame64.size()) {
+        frameWithSpaces.append( frame64[i]);
+        ++i;
+        if( !(i%2)) frameWithSpaces.append( 0x20);
+    }
+
+    frameWithSpaces.append( 0x0d); /* CR */
+    frameWithSpaces.append( 0x0a); /* LF */
+
+    emit contact_.base64TextReady( frameWithSpaces);
 }
 
 void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
@@ -211,9 +242,8 @@ void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *fram
         frame64.append( 0x20);
     }
 
-    frame64.append( 0x0d);
-    frame64.append( 0x0a);
-    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+    frame64.append( 0x0d); /* CR */
+    frame64.append( 0x0a); /* LF */
 
     emit contact_.binaryTextReady( frame64);
 }
@@ -225,12 +255,16 @@ void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame
 
     for( int i = 0; i < frame.size(); ++i) {
         char c = frame[i];
-        frame64.append( c);
+        if( (int)c > 0x1F)
+            frame64.append( c);
+        else
+            frame64.append( 0x2E);
+        if( !((i+1)%8)) frame64.append( 0x20);
+
     }
 
-    frame64.append( 0x0d);
-    frame64.append( 0x0a);
-    frame64.append( "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
+    frame64.append( 0x0d); /* CR */
+    frame64.append( 0x0a); /* LF */
 
     emit contact_.asciiTextReady( frame64);
 }

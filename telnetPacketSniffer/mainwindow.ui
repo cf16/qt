@@ -377,22 +377,6 @@ background-color: rgb(255, 255, 0);</string>
       <item row="12" column="3">
        <widget class="QPlainTextEdit" name="framesAsciiPTEdit"/>
       </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="framesBase64Lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>3</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>frames base64</string>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="0">
        <widget class="QLabel" name="socketMessagesLabel">
         <property name="sizePolicy">
@@ -423,31 +407,6 @@ background-color: rgb(255, 255, 0);</string>
         </property>
        </widget>
       </item>
-      <item row="12" column="0">
-       <widget class="QPlainTextEdit" name="framesBase64PTEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>3</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="backgroundVisible">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="1" colspan="2">
-       <widget class="QPlainTextEdit" name="framesBinaryPTEdit"/>
-      </item>
       <item row="2" column="3">
        <widget class="QPushButton" name="resetNextBtn">
         <property name="text">
@@ -473,13 +432,6 @@ background-color: rgb(255, 255, 0);</string>
        <widget class="QPushButton" name="sendThisOneBtn">
         <property name="text">
          <string>send this one</string>
-        </property>
-       </widget>
-      </item>
-      <item row="13" column="0">
-       <widget class="QPushButton" name="framesBase64Btn">
-        <property name="text">
-         <string>clear</string>
         </property>
        </widget>
       </item>
@@ -556,13 +508,6 @@ background-color: rgb(255, 255, 0);</string>
       <item row="12" column="4">
        <widget class="QPlainTextEdit" name="discoveryChannelPTEdit"/>
       </item>
-      <item row="13" column="1" colspan="2">
-       <widget class="QPushButton" name="framesBinaryBtn">
-        <property name="text">
-         <string>clear</string>
-        </property>
-       </widget>
-      </item>
       <item row="9" column="2" colspan="2">
        <widget class="QPushButton" name="clearMsgListBtn">
         <property name="text">
@@ -614,13 +559,6 @@ background-color: rgb(255, 255, 0);</string>
        <widget class="QPushButton" name="pickThisOneBtn">
         <property name="text">
          <string>pick this one</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="1">
-       <widget class="QLabel" name="framesBinaryLbl">
-        <property name="text">
-         <string>frames binary</string>
         </property>
        </widget>
       </item>
@@ -687,6 +625,85 @@ background-color: rgb(255, 255, 0);</string>
        <widget class="QPushButton" name="stopSniffingBtn">
         <property name="text">
          <string>stop sniffing</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QPlainTextEdit" name="framesBinaryPTEdit"/>
+      </item>
+      <item row="13" column="2">
+       <widget class="QPushButton" name="framesBinaryBtn">
+        <property name="text">
+         <string>clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="2">
+       <widget class="QLabel" name="framesBinaryLbl">
+        <property name="text">
+         <string>frames binary</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QLabel" name="framesBase64Lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>3</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>frames base64</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QPlainTextEdit" name="framesBase64PTEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>3</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="backgroundVisible">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QPushButton" name="framesBase64Btn">
+        <property name="text">
+         <string>clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="framesHexLbl">
+        <property name="text">
+         <string>frames hex</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QPlainTextEdit" name="framesHexPTEdit"/>
+      </item>
+      <item row="13" column="0">
+       <widget class="QPushButton" name="framesHexBtn">
+        <property name="text">
+         <string>clear</string>
         </property>
        </widget>
       </item>
@@ -879,6 +896,22 @@ background-color: rgb(255, 255, 0);</string>
     </hint>
     <hint type="destinationlabel">
      <x>1141</x>
+     <y>662</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>framesHexBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>framesHexPTEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>761</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
      <y>662</y>
     </hint>
    </hints>

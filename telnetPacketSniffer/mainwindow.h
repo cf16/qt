@@ -63,6 +63,7 @@ private slots:
     void sendThisOne();
     void pickThisOne();
 
+    void hexAppendText( QString text);
     void base64AppendText( QString text);
     void binaryAppendText( QString text);
     void asciiAppendText( QString text);

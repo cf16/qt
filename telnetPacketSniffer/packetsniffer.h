@@ -21,6 +21,7 @@ public:
     int stop_sniffing();
 
 signals:
+    void hexTextReady( QString text);
     void base64TextReady( QString text);
     void binaryTextReady( QString text);
     void asciiTextReady( QString text);
@@ -46,6 +47,7 @@ public:
     static PcapWorker contact_;
 
 signals:
+    void hexTextReady( QString text);
     void base64TextReady( QString text);
     void binaryTextReady( QString text);
     void asciiTextReady( QString text);
@@ -57,6 +59,7 @@ private:
     void errAllWindows( QString text);
     pcap_t* open_pcap_socket( char* device, const char* bpfstr);
     static void parse_frame( u_char *user, const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
+    static void printHex( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
     static void printBase64( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
     static void printBinary( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
     static void printAscii( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);

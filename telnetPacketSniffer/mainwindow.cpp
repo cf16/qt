@@ -67,6 +67,7 @@ MainWindow::MainWindow( QWidget *parent) :
     QObject::connect( ui->pickThisOneBtn, SIGNAL( clicked()), this, SLOT( pickThisOne()));
 
     /* Connect packet sniffer. */
+    QObject::connect ( &packetSniffer_, SIGNAL( hexTextReady(QString)), this, SLOT( hexAppendText(QString)));
     QObject::connect ( &packetSniffer_, SIGNAL( base64TextReady(QString)), this, SLOT( base64AppendText(QString)));
     QObject::connect ( &packetSniffer_, SIGNAL( binaryTextReady(QString)), this, SLOT( binaryAppendText(QString)));
     QObject::connect ( &packetSniffer_, SIGNAL( asciiTextReady(QString)), this, SLOT( asciiAppendText(QString)));
@@ -360,6 +361,11 @@ void MainWindow::pickThisOne()
         ui->msgLineEdit->setText( msg);
 }
 
+void MainWindow::hexAppendText( QString text)
+{
+    ui->framesHexPTEdit->appendPlainText( text);
+}
+
 void MainWindow::base64AppendText( QString text)
 {
     ui->framesBase64PTEdit->appendPlainText( text);
@@ -377,6 +383,7 @@ void MainWindow::asciiAppendText( QString text)
 
 void MainWindow::allFramesAppendText( QString text)
 {
+    ui->framesHexPTEdit->appendPlainText( text);
     ui->framesBase64PTEdit->appendPlainText( text);
     ui->framesBinaryPTEdit->appendPlainText( text);
     ui->framesAsciiPTEdit->appendPlainText( text);
