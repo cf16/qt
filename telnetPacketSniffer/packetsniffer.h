@@ -9,6 +9,8 @@ class QPlainTextEdit;
 class PcapWorker;
 typedef struct pcap pcap_t;
 
+#define ETHERNET2_MAX_SIZE 1518
+
 class PacketSniffer : public QObject
 {
     Q_OBJECT
@@ -53,7 +55,11 @@ signals:
 private:
     void errAllWindows( QString text);
     pcap_t* open_pcap_socket( char* device, const char* bpfstr);
-    static void parse_frame( u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr);
+    static void parse_frame( u_char *user, const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
+    static void printBase64( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
+    static void printBinary( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
+    static void printAscii( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
+    static void printFrameInfo( const struct pcap_pkthdr *frame_header, const u_char *frame_ptr);
     QPlainTextEdit *base64Output_;
     QPlainTextEdit *binaryOutput_;
     QPlainTextEdit *asciiOutput_;
@@ -61,6 +67,7 @@ private:
     int link_type_;
     static int link_header_len_;
     int packets_;
+    static unsigned char frame[ETHERNET2_MAX_SIZE];
 };
 
 #endif // PACKETSNIFFER_H

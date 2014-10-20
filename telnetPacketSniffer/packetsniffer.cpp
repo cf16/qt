@@ -13,6 +13,8 @@
 
 #include <QPlainTextEdit>
 
+#include <bitset>
+
 int PcapWorker::link_header_len_;
 PcapWorker PcapWorker::contact_;
 
@@ -95,16 +97,16 @@ void PcapWorker::run() Q_DECL_OVERRIDE
     /* Data link layer header size. */
     switch (link_type_)
     {
-    case DLT_NULL:
+    case DLT_NULL:                  /* BSD loopback encapsulation */
         link_header_len_ = 4;
         break;
 
-    case DLT_EN10MB:
+    case DLT_EN10MB:                /* Ethernet (10Mb) */
         link_header_len_ = 14;
         break;
 
-    case DLT_SLIP:
-    case DLT_PPP:
+    case DLT_SLIP:                  /* Serial Line IP */
+    case DLT_PPP:                   /* Point-to-point Protocol */
         link_header_len_ = 24;
         break;
 
@@ -176,8 +178,11 @@ pcap_t* PcapWorker::open_pcap_socket( char *device, const char *bpfstr)
     return pd;
 }
 
-void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const u_char *packetptr)
+void PcapWorker::parse_frame( u_char *user, const struct pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
+    printBase64( frame_header, frame_ptr);
+    printBinary( frame_header, frame_ptr);
+
     struct ip* iphdr;
     struct icmphdr* icmphdr;
     struct tcphdr* tcphdr;
@@ -186,8 +191,8 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
     unsigned short id, seq;
 
     /* Skip the datalink layer header to IP header fields. */
-    packetptr += link_header_len_;
-    iphdr = (struct ip*)packetptr;
+    frame_ptr += link_header_len_;
+    iphdr = (struct ip*)frame_ptr;
     strcpy(srcip, inet_ntoa(iphdr->ip_src));
     strcpy(dstip, inet_ntoa(iphdr->ip_dst));
     sprintf(iphdrInfo, "ID:%d TOS:0x%x, TTL:%d IpLen:%d DgLen:%d",
@@ -196,11 +201,11 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
 
     /* Advance to the transport layer header */
     char err[PCAP_ERRBUF_SIZE+40];
-    packetptr += 4*iphdr->ip_hl;
+    frame_ptr += 4*iphdr->ip_hl;
     switch (iphdr->ip_p)
     {
     case IPPROTO_TCP:
-        tcphdr = (struct tcphdr*)packetptr;
+        tcphdr = (struct tcphdr*)frame_ptr;
         sprintf( err, "TCP  %s:%d -> %s:%d\n", srcip, ntohs(tcphdr->source),
                dstip, ntohs(tcphdr->dest));
         emit contact_.allTextReady( err);
@@ -219,7 +224,7 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
         break;
 
     case IPPROTO_UDP:
-        udphdr = (struct udphdr*)packetptr;
+        udphdr = (struct udphdr*)frame_ptr;
         sprintf( err, "UDP  %s:%d -> %s:%d\n", srcip, ntohs(udphdr->source),
                dstip, ntohs(udphdr->dest));
         emit contact_.allTextReady( err);
@@ -228,7 +233,7 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
         break;
 
     case IPPROTO_ICMP:
-        icmphdr = (struct icmphdr*)packetptr;
+        icmphdr = (struct icmphdr*)frame_ptr;
         sprintf( err, "ICMP %s -> %s\n", srcip, dstip);
         emit contact_.allTextReady( err);
         sprintf( err, "%s\n", iphdrInfo);
@@ -242,4 +247,29 @@ void PcapWorker::parse_frame( u_char *user, const pcap_pkthdr *packethdr, const 
     }
     sprintf( err, "%s", "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
     emit contact_.allTextReady( err);
+}
+
+void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    QString frame64 = frame.toBase64();
+    emit contact_.base64TextReady( frame64);
+}
+
+void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+    QByteArray frame( (char*)frame_ptr, frame_header->len);
+    char c = frame[0];
+    std::bitset<8> b( c);
+    QString frame64;
+    frame64.append( b.to_string().c_str());
+    emit contact_.binaryTextReady( frame64);
+}
+
+void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
+}
+
+void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
+{
 }
