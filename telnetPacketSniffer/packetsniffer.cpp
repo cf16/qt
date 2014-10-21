@@ -104,7 +104,7 @@ void PcapWorker::run() Q_DECL_OVERRIDE
         link_header_len_ = 4;
         break;
 
-    case DLT_EN10MB:                /* Ethernet (10Mb) */
+    case DLT_EN10MB:                /* Ethernet 2, DIX, (10Mb) */
         link_header_len_ = 14;
         break;
 
@@ -255,11 +255,19 @@ void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame
 
     for( int i = 0; i < frame.size(); ++i) {
         char c = frame[i];
-        if( (int)c > 0x1F)
+
+        /* printable? */
+        if( (int)c > 0x1F) /* US, unit separator (dec 31) is really separator ;p */
             frame64.append( c);
         else
             frame64.append( 0x2E);
-        if( !((i+1)%8)) frame64.append( 0x20);
+
+        if( !((i+1)%8))
+        {
+            /* add two spaces to improve user experience */
+            frame64.append( 0x20);
+            frame64.append( 0x20);
+        }
 
     }
 
@@ -278,16 +286,17 @@ void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *f
     char iphdrInfo[256], srcip[256], dstip[256];
     unsigned short id, seq;
 
-    /* Skip the datalink layer header to IP header fields. */
+    /* Skip the datalink layer header to IP header fields (IP packet). */
     frame_ptr += link_header_len_;
     iphdr = (struct ip*)frame_ptr;
     strcpy(srcip, inet_ntoa(iphdr->ip_src));
     strcpy(dstip, inet_ntoa(iphdr->ip_dst));
-    sprintf(iphdrInfo, "ID:%d TOS:0x%x, TTL:%d IpLen:%d DgLen:%d",
+    sprintf(iphdrInfo, "ID:%d TOS:0x%x, TTL:%d Len:%d DlHdrLen:%d IpHLen:%d DgLen:%d",
             ntohs(iphdr->ip_id), iphdr->ip_tos, iphdr->ip_ttl,
+            ntohs(iphdr->ip_len)+link_header_len_, link_header_len_,
             4*iphdr->ip_hl, ntohs(iphdr->ip_len));
 
-    /* Advance to the transport layer header */
+    /* Advance to the transport layer header (segment or datagram) */
     char err[PCAP_ERRBUF_SIZE+40];
     frame_ptr += 4*iphdr->ip_hl;
 
@@ -300,7 +309,7 @@ void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *f
         emit contact_.discoveryTextReady( err);
         sprintf( err, "%s\n", iphdrInfo);
         emit contact_.discoveryTextReady( err);
-        sprintf( err,"%c%c%c%c%c%c Seq: 0x%x Ack: 0x%x Win: 0x%x TcpLen: %d\n",
+        sprintf( err,"%c%c%c%c%c%c Seq: 0x%x Ack: 0x%x Win: 0x%x TcpSegLen:%d TcpHLen:%d Data:%d\n",
                (tcphdr->urg ? 'U' : '*'),
                (tcphdr->ack ? 'A' : '*'),
                (tcphdr->psh ? 'P' : '*'),
@@ -308,7 +317,8 @@ void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *f
                (tcphdr->syn ? 'S' : '*'),
                (tcphdr->fin ? 'F' : '*'),
                ntohl(tcphdr->seq), ntohl(tcphdr->ack_seq),
-               ntohs(tcphdr->window), 4*tcphdr->doff);
+               ntohs(tcphdr->window), ntohs(iphdr->ip_len)-4*iphdr->ip_hl, 4*tcphdr->doff,
+               ntohs(iphdr->ip_len)-4*iphdr->ip_hl-4*tcphdr->doff);
         emit contact_.discoveryTextReady( err);
         break;
 

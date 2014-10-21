@@ -9,6 +9,7 @@ class QPlainTextEdit;
 class PcapWorker;
 typedef struct pcap pcap_t;
 
+/* Ethernet2, DIX */
 #define ETHERNET2_MAX_SIZE 1518
 
 class PacketSniffer : public QObject
