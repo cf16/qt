@@ -200,6 +200,7 @@ void PcapWorker::printHex(const pcap_pkthdr *frame_header, const u_char *frame_p
     int i = 0;
 
     while( i < frameHex.size()) {
+
         frameWithSpaces.append( frameHex[i]);
         ++i;
         if( !(i%2)) frameWithSpaces.append( 0x20);
@@ -219,6 +220,7 @@ void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *fram
     int i = 0;
 
     while( i < frame64.size()) {
+
         frameWithSpaces.append( frame64[i]);
         ++i;
         if( !(i%2)) frameWithSpaces.append( 0x20);
@@ -233,48 +235,50 @@ void PcapWorker::printBase64(const pcap_pkthdr *frame_header, const u_char *fram
 void PcapWorker::printBinary(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
     QByteArray frame( (char*)frame_ptr, frame_header->len);
-    QString frame64;
+    QString frameBinary;
 
     for( int i = 0; i < frame.size(); ++i) {
+
         char c = frame[i];
         std::bitset<8> b( c);
-        frame64.append( b.to_string().c_str());
-        frame64.append( 0x20);
+        frameBinary.append( b.to_string().c_str());
+        frameBinary.append( 0x20);
     }
 
-    frame64.append( 0x0d); /* CR */
-    frame64.append( 0x0a); /* LF */
+    frameBinary.append( 0x0d); /* CR */
+    frameBinary.append( 0x0a); /* LF */
 
-    emit contact_.binaryTextReady( frame64);
+    emit contact_.binaryTextReady( frameBinary);
 }
 
 void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
 {
     QByteArray frame( (char*)frame_ptr, frame_header->len);
-    QString frame64;
+    QString frameAscii;
 
     for( int i = 0; i < frame.size(); ++i) {
+
         char c = frame[i];
 
         /* printable? */
         if( (int)c > 0x1F) /* US, unit separator (dec 31) is really separator ;p */
-            frame64.append( c);
+            frameAscii.append( c);
         else
-            frame64.append( 0x2E);
+            frameAscii.append( 0x2E);
 
         if( !((i+1)%8))
         {
             /* add two spaces to improve user experience */
-            frame64.append( 0x20);
-            frame64.append( 0x20);
+            frameAscii.append( 0x20);
+            frameAscii.append( 0x20);
         }
 
     }
 
-    frame64.append( 0x0d); /* CR */
-    frame64.append( 0x0a); /* LF */
+    frameAscii.append( 0x0d); /* CR */
+    frameAscii.append( 0x0a); /* LF */
 
-    emit contact_.asciiTextReady( frame64);
+    emit contact_.asciiTextReady( frameAscii);
 }
 
 void PcapWorker::printFrameInfo(const pcap_pkthdr *frame_header, const u_char *frame_ptr)
