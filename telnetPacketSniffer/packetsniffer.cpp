@@ -272,7 +272,6 @@ void PcapWorker::printAscii(const pcap_pkthdr *frame_header, const u_char *frame
             frameAscii.append( 0x20);
             frameAscii.append( 0x20);
         }
-
     }
 
     frameAscii.append( 0x0d); /* CR */
