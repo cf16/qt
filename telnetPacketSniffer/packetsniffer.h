@@ -75,6 +75,7 @@ private:
     int packets_;
     static unsigned char frame_[ETHERNET2_MAX_SIZE];
     pcap_t *pd_; /* pcap descriptor */
+    bool pcap_running_;
 };
 
 #endif // PACKETSNIFFER_H

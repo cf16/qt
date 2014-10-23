@@ -55,7 +55,6 @@ int PacketSniffer::stop_sniffing()
     if ( worker_)
         worker_->stop();
 
-
     return 0;
 }
 
@@ -67,7 +66,8 @@ PcapWorker::PcapWorker( QObject *ptr, QPlainTextEdit *base64Output,
     binaryOutput_( binaryOutput),
     asciiOutput_( asciiOutput),
     bp_filter_( filter),            /* berkley pcap filter          */
-    packets_( 0)                    /* infinite number of packets   */
+    packets_( 0),                   /* infinite number of packets   */
+    pcap_running_( false)
 {
 }
 
@@ -124,8 +124,11 @@ void PcapWorker::run() Q_DECL_OVERRIDE
 
     emit errAllWindows( QString( "Started to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
 
+    pcap_running_ = true;
+
     /* Start capturing packets. */
-    if ( pcap_loop( pd_, packets_, parse_frame, 0) < 0) {
+    if ( pcap_loop( pd_, packets_, parse_frame, 0) < 0)
+    {
         sprintf( err, "pcap_loop failed: %s\n", pcap_geterr(pd_));
         emit errAllWindows( err);
     }
@@ -135,8 +138,22 @@ void PcapWorker::run() Q_DECL_OVERRIDE
 
 void PcapWorker::stop()
 {
-    pcap_breakloop( pd_);
-    pcap_close( pd_);
+    if( pcap_running_)
+    {
+        pcap_breakloop( pd_);
+        struct pcap_stat stats;
+
+        if ( pcap_stats( pd_, &stats) >= 0)
+        {
+            char inf[200];
+            sprintf( inf, "%d packets received\n%d packets dropped\n",
+                                        stats.ps_recv, stats.ps_drop);
+            emit errAllWindows( inf);
+        }
+
+        pcap_close( pd_);
+        pcap_running_ = false;
+    }
 }
 
 
