@@ -70,6 +70,7 @@ private slots:
     void allFramesAppendText( QString text);
     void discoveryAppendText( QString text);
     void startSniffing();
+    void stopSniffing();
 
 signals:
     void openTelnetConnection( QString host, QString port);

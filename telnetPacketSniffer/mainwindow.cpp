@@ -410,6 +410,11 @@ void MainWindow::startSniffing()
     }
 }
 
+void MainWindow::stopSniffing()
+{
+    packetSniffer_.stop_sniffing();
+}
+
 void MainWindow::closeEvent ( QCloseEvent *event)
 {
     QMessageBox msgBox;

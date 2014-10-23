@@ -42,6 +42,7 @@ class PcapWorker : public QThread {
     Q_OBJECT
 public:
     void run() Q_DECL_OVERRIDE;
+    void stop();
     explicit PcapWorker( QObject *ptr = 0) : QThread( ptr) {}
     PcapWorker( QObject *ptr, QPlainTextEdit *base64Output,
             QPlainTextEdit *binaryOutput, QPlainTextEdit *asciiOutput, QString filter);

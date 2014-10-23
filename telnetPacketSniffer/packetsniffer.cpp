@@ -19,7 +19,7 @@ int PcapWorker::link_header_len_;
 PcapWorker PcapWorker::contact_;
 
 PacketSniffer::PacketSniffer(QObject *parent) :
-    QObject( parent)
+    QObject( parent), worker_(0)
 {
     /* Connect signals to slots. */
     QObject::connect ( &PcapWorker::contact_, SIGNAL( hexTextReady(QString)), this, SIGNAL( hexTextReady(QString)));
@@ -52,7 +52,10 @@ int PacketSniffer::start_sniffing( QString filter)
 
 int PacketSniffer::stop_sniffing()
 {
-    //pcap_breakloop
+    if ( worker_)
+        worker_->stop();
+
+
     return 0;
 }
 
@@ -128,6 +131,12 @@ void PcapWorker::run() Q_DECL_OVERRIDE
     }
 
     emit errAllWindows( QString( "Finished to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
+}
+
+void PcapWorker::stop()
+{
+    pcap_breakloop( pd_);
+    pcap_close( pd_);
 }
 
 
