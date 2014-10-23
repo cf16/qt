@@ -72,7 +72,8 @@ private:
     int link_type_;
     static int link_header_len_;
     int packets_;
-    static unsigned char frame[ETHERNET2_MAX_SIZE];
+    static unsigned char frame_[ETHERNET2_MAX_SIZE];
+    pcap_t *pd_; /* pcap descriptor */
 };
 
 #endif // PACKETSNIFFER_H

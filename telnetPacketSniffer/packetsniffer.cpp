@@ -52,6 +52,7 @@ int PacketSniffer::start_sniffing( QString filter)
 
 int PacketSniffer::stop_sniffing()
 {
+    //pcap_breakloop
     return 0;
 }
 
@@ -85,14 +86,14 @@ void PcapWorker::run() Q_DECL_OVERRIDE
     bp_filter[255] = '\0';
     char device[256] = "";
 
-    pcap_t *pd = open_pcap_socket( device, bp_filter);
+    pd_ = open_pcap_socket( device, bp_filter);
 
     char err[PCAP_ERRBUF_SIZE+40];
 
     // Determine the datalink layer type.
-    if ( ( link_type_ = pcap_datalink(pd)) < 0)
+    if ( ( link_type_ = pcap_datalink(pd_)) < 0)
     {
-        sprintf( err, "pcap_datalink(): %s\n", pcap_geterr(pd));
+        sprintf( err, "pcap_datalink(): %s\n", pcap_geterr(pd_));
         emit errAllWindows( err);
         return;
     }
@@ -121,8 +122,8 @@ void PcapWorker::run() Q_DECL_OVERRIDE
     emit errAllWindows( QString( "Started to sniff raw packets.\nFilter: %1\n").arg(bp_filter_));
 
     /* Start capturing packets. */
-    if ( pcap_loop( pd, packets_, parse_frame, 0) < 0) {
-        sprintf( err, "pcap_loop failed: %s\n", pcap_geterr(pd));
+    if ( pcap_loop( pd_, packets_, parse_frame, 0) < 0) {
+        sprintf( err, "pcap_loop failed: %s\n", pcap_geterr(pd_));
         emit errAllWindows( err);
     }
 
