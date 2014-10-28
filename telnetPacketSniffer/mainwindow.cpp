@@ -20,8 +20,8 @@ MainWindow::MainWindow( QWidget *parent) :
 {
     ui->setupUi(this);
     ui->statusStateLabel->setStyleSheet( QString( "background-color: rgb(255, 0, 0);color: rgb(0, 0, 0);"));
-    ui->hostLineEdit->setText( "10.0.0.44");
-    hostText = "10.0.0.44";
+    hostText = "10.11.0.1";
+    ui->hostLineEdit->setText( hostText);
     ui->portLineEdit->setText( "6502");
     portText = "6502";
     ui->msgLineEdit->setText( "TO\\NT4");

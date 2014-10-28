@@ -89,7 +89,8 @@ void PcapWorker::run() Q_DECL_OVERRIDE
     bp_filter[255] = '\0';
     char device[256] = "";
 
-    pd_ = open_pcap_socket( device, bp_filter);
+    if( ( pd_ = open_pcap_socket( device, bp_filter)) == 0)
+        return;
 
     char err[PCAP_ERRBUF_SIZE+40];
 
