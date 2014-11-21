@@ -102,8 +102,8 @@ void TelnetClient::send( QString msg)
 }
 
 /* send msg as "GET msg HTTP/1.0\r\n\r\n"
- * e.g. send /finditem?path=OK request as
- * "GET /finditem?path=OK HTTP/1.0\r\n" */
+ * e.g. send /select?path=Name+Spaces request as
+ * "GET /select?path=Name+Spaces HTTP/1.0\r\n" */
 void TelnetClient::sendWebRequest( QString msg)
 {
    /*
