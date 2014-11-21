@@ -430,6 +430,15 @@ background-color: rgb(255, 255, 0);</string>
       </item>
       <item row="1" column="3">
        <widget class="QPushButton" name="sendThisOneBtn">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(137, 253, 151);</string>
+        </property>
         <property name="text">
          <string>send this one</string>
         </property>
@@ -500,6 +509,15 @@ background-color: rgb(255, 255, 0);</string>
       </item>
       <item row="0" column="3">
        <widget class="QPushButton" name="sendNextMsgListButton">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(176, 255, 176);</string>
+        </property>
         <property name="text">
          <string>send/next</string>
         </property>

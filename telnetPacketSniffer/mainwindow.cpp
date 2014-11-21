@@ -27,6 +27,7 @@ MainWindow::MainWindow( QWidget *parent) :
     ui->msgLineEdit->setText( "TO\\NT4");
     ui->listPlainTextEdit->setLineWrapMode( QPlainTextEdit::NoWrap);
     ui->pcapFilterText->setText( "tcp port 6502");
+    ui->msgWebLineEdit->setText( "/select?path=Name+Spaces");  // mongoose parser on port 7006, not apache HTTP parser on 80
 
     telnetClientConnected_ = 0;
 
