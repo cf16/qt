@@ -103,7 +103,10 @@ void TelnetClient::send( QString msg)
 
 /* send msg as "GET msg HTTP/1.0\r\n\r\n"
  * e.g. send /select?path=Name+Spaces request as
- * "GET /select?path=Name+Spaces HTTP/1.0\r\n" */
+ * "GET /select?path=Name+Spaces HTTP/1.0\r\n"
+ * example 2:
+ * send "/select?path=Name+Spaces%2F_tenantConfig%2Fdefault%2fCampaign+Names&sort=none&start=0&limit=25"
+*/
 void TelnetClient::sendWebRequest( QString msg)
 {
    /*
