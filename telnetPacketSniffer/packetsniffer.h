@@ -2,7 +2,7 @@
 /// @brief     Packet sniffing utility
 /// @author    Piotr Gregor, peterg@sytel.com
 /// @version   0.1
-/// @date      somewhere in September 2014
+/// @date      10 Aug 2014
 /// @copyright "GPL"
 ///
 /// telnetpacketsniffer has been compiled on Windows using Visual Studio 12 2013 compiler
