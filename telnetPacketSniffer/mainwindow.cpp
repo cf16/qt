@@ -28,6 +28,7 @@ MainWindow::MainWindow( QWidget *parent) :
     ui->listPlainTextEdit->setLineWrapMode( QPlainTextEdit::NoWrap);
     ui->pcapFilterText->setText( "tcp port 6502");
     ui->msgWebLineEdit->setText( "/select?path=Name+Spaces");  // mongoose parser on port 7006, not apache HTTP parser on 80
+    ui->msgWebLineEdit->setText( "/select?path=Name+Spaces%2F_tenantConfig%2Fdefault%2fCampaign+Names&sort=none&start=0&limit=25");
 
     telnetClientConnected_ = 0;
 
