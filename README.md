@@ -1,1 +1,1 @@
-examples of projects using Qt
+projects written with Qt
