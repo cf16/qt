@@ -1,13 +1,8 @@
 ///  @file      rtp.h
-///  @brief     RTP and RTCP.
-///  @details   Defines RTP/RTCP packet structs.
-///             The RTCP packet rate may be
-///             different on each side of the mixer.
-///  @author    peterg
-///  @version   0.1
+///  @brief     RTP/RTCP packets.
+///  @author    peterg at sytel.com
 ///  @date      03 Nov 2015 3:21 PM
-///  @copyright Sytel Limited
-
+///  @copyright GPL2
 
 #ifndef RTP_H
 #define RTP_H

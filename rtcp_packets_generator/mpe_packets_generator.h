@@ -1,3 +1,9 @@
+///  @file      mpe_packets_generator.h
+///  @brief     RTCP packet generator.
+///  @author    peterg at sytel.com
+///  @date      03 Nov 2015 3:21 PM
+///  @copyright GPL2
+
 #ifndef MPE_PACKETS_GENERATOR_H
 #define MPE_PACKETS_GENERATOR_H
 
